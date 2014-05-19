@@ -9,7 +9,6 @@ angular.module('ProbabilityApp')
         $scope.cards = "CARDS";
 
         $scope.tabs = [
-            { title:'Dice', content:$scope.dice },
             { title:'Coin Toss', content:$scope.coin},
             { title:'Spinner', content:$scope.spin},
             { title:'Cards', content:$scope.cards},
