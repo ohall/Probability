@@ -1,0 +1,9 @@
+<div ng-controller="MainCtrl" >
+    <h1>Probability Simulator</h1>
+    <h2>Data Generators</h2>
+    <tabset>
+        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" >
+            <h3>{{tab.content}}</h3>
+        </tab>
+    </tabset>
+</>
