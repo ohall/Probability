@@ -1,0 +1,137 @@
+
+
+
+
+
+
+
+
+
+
+                             <script>(function() {with (this[2]) {with (this[1]) {with (this[0]) {return function(event) {posclicked(0)
+};}}}})</script>
+
+
+
+                            <script>(function() {with (this[2]) {with (this[1]) {with (this[0]) {return function(event) {autoplay(pad.Plays.value)
+};}}}})</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                      <script>
+<!--
+var automode = 0;
+var framenum = 0;
+var framecnt = 0;
+var flipping = null;
+var choice = 0;
+var headcnt = 0;
+var tailcnt = 0;
+var pict = new Array(3, 4, 1, 4);
+var cachedimages = new Array(5);
+var historical = true;
+cachedimages[0] = new Image();
+cachedimages[0].src = "heads.jpg";
+cachedimages[1] = new Image();
+cachedimages[1].src = "tailsma1.jpg";
+cachedimages[2] = new Image();
+cachedimages[2].src = "tailsma.jpg";
+cachedimages[3] = new Image();
+cachedimages[3].src = "heads1.jpg";
+cachedimages[4] = new Image();
+cachedimages[4].src = "dist.jpg";
+
+function posclicked(posnum) {
+
+  if (flipping == null) {
+     if (Math.random() < 0.5) {
+        choice = 0;
+        headcnt++;
+        parent.coinframe.document.dataform.headcnt.value++;
+     }
+     else {
+        choice = 2;
+        tailcnt++;
+        parent.coinframe.document.dataform.tailcnt.value++;
+     }
+     if (!automode) {
+        updateDB();
+        parent.coinframe.document.dataform.headcnt.value = 0;
+        parent.coinframe.document.dataform.tailcnt.value = 0;
+        framecnt = 0;
+        animate();
+     }
+   }
+}
+
+function autoplay(iterations) {
+   automode = 1;
+   for (var i = 0; i < (iterations-1); i++)
+      posclicked(0);
+   automode = 0;
+   posclicked(0);
+}
+function sesstats() {
+   historical = false;
+   report();
+}
+function histstats() {
+   historical = true;
+   report();
+}
+function updateDB() {
+   parent.coinframe.document.dataform.submit();
+}
+function animate() {
+   framenum = (framecnt) % 4;
+   window.document.coin.src = cachedimages[pict[framenum]].src;
+   framecnt++;
+   if ((framecnt > 8) && (framenum == choice)) {
+      window.document.coin.src = cachedimages[framenum].src;
+      flipping = null;
+      report();
+      focus();
+   }
+   else
+      flipping = setTimeout("animate()", 30);
+}
+function report(){
+   if (historical) {
+      parent.reportframe.location = "report.php";
+   }
+   else {
+      parent.reportframe.document.open();
+      parent.reportframe.document.write('<table><tr><th colspan="3" align="left">Results:</th></tr><tr bgcolor="AAFFFF"><th align="left" width="60">Flip</th><th align="right" width="260">Session</th><th align="right" width="80">Expected</th></tr>');
+      parent.reportframe.document.write('<tr><td>Heads</td><td align="right">' + 
+          Math.round((headcnt * 10000) / (headcnt+tailcnt)) / 100 + '% (' +
+          headcnt + '\/' + (headcnt+tailcnt) + ')' + '</td><td align="right">' +
+          '50% (1\/2)</td></tr><tr bgcolor="#DDDDDD"><td>Tails</td><td align="right">' +
+          Math.round((tailcnt * 10000) / (headcnt+tailcnt)) / 100 + '% (' +
+          tailcnt + '\/' + (headcnt+tailcnt) + ')' + '</td><td align="right">' +
+          '50% (1\/2)</td></tr></table>');
+      parent.reportframe.document.close();
+   }
+}
+// -->
+</script>

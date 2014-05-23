@@ -1,29 +1,35 @@
-body {
-    font-size:.9em;
-    font-family:sans-serif;
-}
+/*body {*/
+    /*font-size:.9em;*/
+    /*font-family:sans-serif;*/
+/*}*/
 @-webkit-keyframes spin {
-    0% { -webkit-transform: translateZ(-100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
-    16% { -webkit-transform: translateZ(-100px) rotateX(180deg) rotateY(180deg) rotateZ(0deg); }
-    33% { -webkit-transform: translateZ(-100px) rotateX(360deg) rotateY(90deg) rotateZ(180deg); }
-    50% { -webkit-transform: translateZ(-100px) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
-    66% { -webkit-transform: translateZ(-100px) rotateX(180deg) rotateY(360deg) rotateZ(270deg); }
-    83% { -webkit-transform: translateZ(-100px) rotateX(270deg) rotateY(180deg) rotateZ(180deg); }
+    /*0% { -webkit-transform: translateZ(-100px) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }*/
+    /*16% { -webkit-transform: translateZ(-100px) rotateX(180deg) rotateY(180deg) rotateZ(0deg); }*/
+    /*33% { -webkit-transform: translateZ(-100px) rotateX(360deg) rotateY(90deg) rotateZ(180deg); }*/
+    /*50% { -webkit-transform: translateZ(-100px) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }*/
+    /*66% { -webkit-transform: translateZ(-100px) rotateX(180deg) rotateY(360deg) rotateZ(270deg); }*/
+    /*83% { -webkit-transform: translateZ(-100px) rotateX(270deg) rotateY(180deg) rotateZ(180deg); }*/
     100% { -webkit-transform: translateZ(-100px) rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
 }
 @-webkit-keyframes roll {
-    0% { -webkit-transform: translate3d(-200px,-50px,-400px) }
-    12% { -webkit-transform: translate3d(0px,0,-100px) }
-    25% { -webkit-transform: translate3d(200px,-50px,-400px) }
-    37% { -webkit-transform: translate3d(0px,-100px,-800px) }
-    50% { -webkit-transform: translate3d(-200px,-50px,-400px) }
-    62% { -webkit-transform: translate3d(0px,0,-100px) }
-    75% { -webkit-transform: translate3d(200px,-50px,-400px) }
-    87% { -webkit-transform: translate3d(0px,-100px,-800px) }
+    /*0% { -webkit-transform: translate3d(-200px,-50px,-400px) }*/
+    /*12% { -webkit-transform: translate3d(0px,0,-100px) }*/
+    /*25% { -webkit-transform: translate3d(200px,-50px,-400px) }*/
+    /*37% { -webkit-transform: translate3d(0px,-100px,-800px) }*/
+    /*50% { -webkit-transform: translate3d(-200px,-50px,-400px) }*/
+    /*62% { -webkit-transform: translate3d(0px,0,-100px) }*/
+    /*75% { -webkit-transform: translate3d(200px,-50px,-400px) }*/
+    /*87% { -webkit-transform: translate3d(0px,-100px,-800px) }*/
     100% { -webkit-transform: translate3d(-200px,-50px,-400px) }
 }
+
+#roll ~ #platform > #dice {
+    -webkit-animation-play-state: paused;
+}
+
+
 #roll:checked ~ #platform > #dice {
-    animation-duration: 2s;
+    -webkit-animation-duration: 2s;
 }
 #roll:checked ~ #platform {
     width:200px;
@@ -34,7 +40,7 @@ body {
 }
 #secondroll:checked ~ #roll:checked ~ #platform > #dice,
 #secondroll:checked ~ #roll:checked ~ #platform {
-    animation-play-state: paused;
+    -webkit-animation-play-state: paused;
 }
 #wrapper {
     position: relative;
@@ -172,56 +178,25 @@ body {
     background: -webkit-linear-gradient(top, #071a1e 0%,#274249 100%);
     background: linear-gradient(to bottom, #071a1e 0%,#274249 100%);
 }
-label, input[type=checkbox]:before {
-    position: absolute;
-    overflow:hidden;
-    top:40px;
-    left:40px;
-    display:block;
-    width:120px;
-    padding-top:9px;
-    height:31px;
-    cursor:pointer;
-    text-align:center;
-    font-size:1.2em;
-    font-weight:bold;
-    color:#fff;
-    border-radius:6px;
-    border:1px solid;
-}
-input[type=checkbox]:before {
-    background:transparent;
-    border-color:transparent;
-}
-input[type=checkbox] {
-    display:none;
-}
-label {
-    opacity:.5;
-    transition:all .3s ease;
-}
-label:hover {
-    opacity:1;
-    box-shadow:0 0 18px rgba(255,255,255,.5);
-}
-label[for=roll] {
-    z-index:1;
-    text-shadow:0 -1px 0 #006699;
-    border-color:#17C7EC;
-    background: -moz-linear-gradient(top, #0099CC 0%, #006699 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0099CC), color-stop(100%,#006699));
-    background: -webkit-linear-gradient(top, #0099CC 0%,#006699 100%);
-    background: linear-gradient(to bottom, #0099CC 0%,#006699 100%);
-}
-label[for=secondroll] {
-    margin-top:-100px;
-    text-shadow:0 -1px 0 #CC0033;
-    border-color:#FF8298;
-    background: -moz-linear-gradient(top, #FF6666 0%, #CC0033 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FF6666), color-stop(100%,#CC0033));
-    background: -webkit-linear-gradient(top, #FF6666 0%,#CC0033 100%);
-    background: linear-gradient(to bottom, #FF6666 0%,#CC0033 100%);
-}
+
+/*label[for=roll] {*/
+    /*z-index:1;*/
+    /*text-shadow:0 -1px 0 #006699;*/
+    /*border-color:#17C7EC;*/
+    /*background: -moz-linear-gradient(top, #0099CC 0%, #006699 100%);*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#0099CC), color-stop(100%,#006699));*/
+    /*background: -webkit-linear-gradient(top, #0099CC 0%,#006699 100%);*/
+    /*background: linear-gradient(to bottom, #0099CC 0%,#006699 100%);*/
+/*}*/
+/*label[for=secondroll] {*/
+    /*margin-top:-100px;*/
+    /*text-shadow:0 -1px 0 #CC0033;*/
+    /*border-color:#FF8298;*/
+    /*background: -moz-linear-gradient(top, #FF6666 0%, #CC0033 100%);*/
+    /*background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FF6666), color-stop(100%,#CC0033));*/
+    /*background: -webkit-linear-gradient(top, #FF6666 0%,#CC0033 100%);*/
+    /*background: linear-gradient(to bottom, #FF6666 0%,#CC0033 100%);*/
+/*}*/
 #roll:checked ~ label[for=roll] {
     margin-top:-100px;
 }
@@ -241,4 +216,80 @@ label[for=secondroll] {
 }
 #secondroll:checked ~ label[for=secondroll]:after {
     content:"Keep rollin'!";
+}
+
+
+
+/*****************************************************************/
+/*                       WHEEL                                   */
+/*****************************************************************/
+
+/* Sets the background image for the wheel */
+td.the_wheel
+{
+    background-image: url(wheel_back.png);
+    background-position: center;
+    background-repeat: none;
+}
+
+/* Do some css reset on selected elements */
+h1, p
+{
+    margin: 0;
+}
+
+div.power_controls
+{
+    margin-right:70px;
+}
+
+div.html5_logo
+{
+    margin-left:70px;
+}
+
+/* Styles for the power selection controls */
+table.power
+{
+    background-color: #cccccc;
+    cursor: pointer;
+    border:1px solid #333333;
+}
+
+table.power th
+{
+    background-color: white;
+    cursor: default;
+}
+
+td.pw1
+{
+    background-color: #6fe8f0;
+}
+
+td.pw2
+{
+    background-color: #86ef6f;
+}
+
+td.pw3
+{
+    background-color: #ef6f6f;
+}
+
+/* Style applied to the spin button once a power has been selected */
+.clickable
+{
+    cursor: pointer;
+}
+
+/* Other misc styles */
+.margin_bottom
+{
+    margin-bottom: 5px;
+}
+
+p.noCanvasMsg
+{
+    color: white;
 }
