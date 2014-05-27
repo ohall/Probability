@@ -1,87 +1,214 @@
 'use strict';
 
-angular.module('ProbabilityApp')
-  .controller('MainCtrl', function ($scope,$interval,$timeout) {
 
-        $scope.dice  = "DICE";
-        $scope.coin  = "COIN";
-        $scope.spin  = "SPIN";
-        $scope.cards = "CARDS";
-        $scope.die1  = "styles/blank.gif";
-        $scope.die2  = "styles/blank.gif";
+var app = angular.module('ProbabilityApp');
 
-        $scope.stop  = false;
+app.controller('MainCtrl', function ($scope,$interval,$timeout) {
 
-        var rollingImgs = [
-            "styles/die-1.gif",
-            "styles/dices-1.gif",
-            "styles/die-2.gif",
-            "styles/dices-2.gif",
-            "styles/die-3.gif",
-            "styles/dices-3.gif",
-            "styles/die-4.gif",
-            "styles/dices-4.gif",
-            "styles/die-5.gif",
-            "styles/dices-5.gif",
-            "styles/die-6.gif",
-            "styles/dices-6.gif",
-            "styles/die-1.gif",
-            "styles/dicet-1.gif",
-            "styles/die-2.gif",
-            "styles/dicet-2.gif",
-            "styles/die-3.gif",
-            "styles/dicet-3.gif",
-            "styles/die-4.gif",
-            "styles/dicet-4.gif",
-            "styles/die-5.gif",
-            "styles/dicet-5.gif",
-            "styles/die-6.gif",
-            "styles/dicet-6.gif"
+    $scope.dice  = "DICE";
+    $scope.coin  = "COIN";
+    $scope.spin  = "SPIN";
+    $scope.cards = "CARDS";
+    $scope.die1  = "styles/blank.gif";
+    $scope.die2  = "styles/blank.gif";
+
+    $scope.stop  = false;
+
+    var rollingImgs = [
+        "styles/die-1.gif",
+        "styles/dices-1.gif",
+        "styles/die-2.gif",
+        "styles/dices-2.gif",
+        "styles/die-3.gif",
+        "styles/dices-3.gif",
+        "styles/die-4.gif",
+        "styles/dices-4.gif",
+        "styles/die-5.gif",
+        "styles/dices-5.gif",
+        "styles/die-6.gif",
+        "styles/dices-6.gif",
+        "styles/die-1.gif",
+        "styles/dicet-1.gif",
+        "styles/die-2.gif",
+        "styles/dicet-2.gif",
+        "styles/die-3.gif",
+        "styles/dicet-3.gif",
+        "styles/die-4.gif",
+        "styles/dicet-4.gif",
+        "styles/die-5.gif",
+        "styles/dicet-5.gif",
+        "styles/die-6.gif",
+        "styles/dicet-6.gif"
+    ];
+
+    $scope.faces = [
+        "styles/die-1.gif",
+        "styles/die-2.gif",
+        "styles/die-3.gif",
+        "styles/die-4.gif",
+        "styles/die-5.gif",
+        "styles/die-6.gif"
+    ];
+
+    $scope.tabs = [
+        { title:'Cards', content:$scope.cards}
+    ];
+
+
+
+    var diceIndices = {one:0,two:0};
+    var rolling;
+    $scope.animateDice = function(){
+        if (!angular.isDefined(rolling)) {
+            rolling = $interval(function() {
+                faceIndex(diceIndices, rollingImgs);
+                $scope.die1 = rollingImgs[diceIndices.one];
+                $scope.die2 = rollingImgs[diceIndices.two];
+            }, 80);
+
+            $timeout(function(){$scope.stopDice()},2000);
+        }
+
+        function faceIndex(indObj,array){
+            indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
+            indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
+        }
+    };
+
+    $scope.stopDice = function(){
+        if (angular.isDefined(rolling)) {
+            $interval.cancel(rolling);
+            rolling = undefined;
+            $scope.die1 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+            $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+        }
+    };
+
+    $scope.newCard = function(){
+        $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
+    };
+
+});
+
+app.directive('backImg', function(){
+    return function (scope, element, attrs) {
+        attrs.$observe('img', function(pUrl) {
+            element.css({
+                'background-image': 'url(' + pUrl + ')',
+                'background-size': 'cover'
+            });
+        });
+    };
+});
+
+
+
+app.controller('MarbleCtrl', function ($scope,$interval){
+        // Now some basic canvas stuff. Here we'll make a variable for the canvas and then initialize its 2d context for drawing
+        var canvas = document.getElementById("canvas"),
+            ctx = canvas.getContext("2d");
+
+        // Now setting the width and height of the canvas
+        var W = 350,
+            H = 450;
+
+        // Applying these to the canvas element
+        canvas.height = H; canvas.width = W;
+
+        // First of all we'll create a ball object which will contain all the methods and variables specific to the ball.
+        // Lets define some variables first
+
+        var balls, i,
+            gravity = 0.2,
+            bounceFactor = 0.8,
+            running = false,
+            updates;
+
+        var colors = [
+            "red",
+            "blue",
+            "green",
+            "black",
+            "purple",
+            "orange",
+            "yellow",
+            "pink",
+            "brown",
+            "teal"
         ];
 
-        $scope.faces = [
-            "styles/die-1.gif",
-            "styles/die-2.gif",
-            "styles/die-3.gif",
-            "styles/die-4.gif",
-            "styles/die-5.gif",
-            "styles/die-6.gif"
-        ];
 
-        $scope.tabs = [
-            { title:'Cards', content:$scope.cards}
-        ];
+        var drawer = function() {
+            // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+            ctx.closePath();
+        };
 
-
-
-        var diceIndices = {one:0,two:0};
-        var rolling;
-        $scope.animateDice = function(){
-            if (!angular.isDefined(rolling)) {
-                rolling = $interval(function() {
-                    faceIndex(diceIndices, rollingImgs);
-                    $scope.die1 = rollingImgs[diceIndices.one];
-                    $scope.die2 = rollingImgs[diceIndices.two];
-                }, 80);
-
-                $timeout(function(){$scope.stopDice()},2000);
-            }
-
-            function faceIndex(indObj,array){
-                indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
-                indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
+        function setBalls(){
+            balls = [];
+            for(i=0;i<10;i++){
+                var iball = {
+                    x: (W/10)*i + 15,
+                    y: Math.floor(Math.random()*10),
+                    radius: 15,
+                    color: colors[i],
+                    // Velocity components
+                    vx: 0,
+                    vy: Math.floor(Math.random()*10),
+                    draw: drawer
+                };
+                balls.push(iball);
             }
         }
 
-        $scope.stopDice = function(){
-            if (angular.isDefined(rolling)) {
-                $interval.cancel(rolling);
-                rolling = undefined;
-                $scope.die1 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
-                $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+    $scope.marbles = function(){
+        setBalls();
+        function clearCanvas() {
+            ctx.clearRect(0, 0, W, H);
+        }
+        // A function that will update the position of the ball is also needed. Lets create one
+        function update() {
+            clearCanvas();
+            for(var i =0;i<balls.length;i++){
+                balls[i].draw();
+                balls[i].y += balls[i].vy;
+                balls[i].vy += gravity;
+                if(balls[i].y + balls[i].radius > H) {
+                    balls[i].y = H - balls[i].radius;
+                    balls[i].vy *= -bounceFactor;
+                }
             }
         }
-    });
+        if(!running){
+            running = true;
+            // Now, the animation time!
+            // in setInterval, 1000/x depicts x fps! So, in this casse, we are aiming for 60fps for smoother animations.
+            updates = $interval(update, 1000/60);
+        }else{
+            running = false;
+            $interval.cancel(updates);
+            updates = undefined;
+            clearCanvas();
+        }
+
+    };
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

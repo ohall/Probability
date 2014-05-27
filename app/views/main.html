@@ -58,8 +58,21 @@
             <a onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>
         </tab>
 
-        <tab ng-repeat="tab in tabs" heading="{{tab.title}}" >
-            <h3>{{tab.content}}</h3>
+        <tab heading="Cards">
+            <div class="flip-container" >
+                <div class="flipper">
+                    <div class="front" ng-mouseover="newCard()"></div>
+                    <div class="back" back-img img="{{card}}"></div>
+                </div>
+            </div>
         </tab>
+
+        <tab heading="Marbles">
+            <div ng-controller="MarbleCtrl">
+                <button ng-click="marbles()">Marbles</button>
+                <canvas id="canvas"></canvas>
+            </div>
+        </tab>
+
     </tabset>
 </div>
