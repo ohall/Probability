@@ -41,93 +41,21 @@
                 begin();
             </script>
         </tab>
-        <tab heading="Dice" disabled="true">
-            <div id="background"></div>
-            <div id="wrapper">
-
-                <input id="roll" name="roll" type="checkbox">
-                <label for="roll">Roll it!</label>
-
-                <input id="secondroll" name="roll" type="checkbox">
-                <label for="secondroll"><span>Stop!</span></label>
-
-                <div id="platform">
-                    <div id="dice">
-                        <div class="side front">
-                            <div class="dot center"></div>
-                        </div>
-                        <div class="side front inner"></div>
-                        <div class="side top">
-                            <div class="dot dtop dleft"></div>
-                            <div class="dot dbottom dright"></div>
-                        </div>
-                        <div class="side top inner"></div>
-                        <div class="side right">
-                            <div class="dot dtop dleft"></div>
-                            <div class="dot center"></div>
-                            <div class="dot dbottom dright"></div>
-                        </div>
-                        <div class="side right inner"></div>
-                        <div class="side left">
-                            <div class="dot dtop dleft"></div>
-                            <div class="dot dtop dright"></div>
-                            <div class="dot dbottom dleft"></div>
-                            <div class="dot dbottom dright"></div>
-                        </div>
-                        <div class="side left inner"></div>
-                        <div class="side bottom">
-                            <div class="dot center"></div>
-                            <div class="dot dtop dleft"></div>
-                            <div class="dot dtop dright"></div>
-                            <div class="dot dbottom dleft"></div>
-                            <div class="dot dbottom dright"></div>
-                        </div>
-                        <div class="side bottom inner"></div>
-                        <div class="side back">
-                            <div class="dot dtop dleft"></div>
-                            <div class="dot dtop dright"></div>
-                            <div class="dot dbottom dleft"></div>
-                            <div class="dot dbottom dright"></div>
-                            <div class="dot center dleft"></div>
-                            <div class="dot center dright"></div>
-                        </div>
-                        <div class="side back inner"></div>
-                        <div class="side cover x"></div>
-                        <div class="side cover y"></div>
-                        <div class="side cover z"></div>
-                    </div>
-                </div>
+        <tab heading="Dice">
+            <div id="dice_diceGroup_0" class="diceGroup">
+                <img  ng-src="{{die1}}">
+                <img  ng-src="{{die2}}">
+                <span id="sidebar_0" class="sidebar"></span>
+            </div>
+            <div id="diceform">
+                <form>
+                    <input type="button" value="Roll Dice" ng-click="animateDice()">
+                    <input type="button" value="Stop Dice" ng-click="stopDice()">
+                </form>
             </div>
         </tab>
         <tab heading="Coin Toss">
             <a onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>
-            <!--<table>-->
-                <!--<tbody>-->
-                <!--<tr><td colspan="2">Click the coin to flip it--or enter a number and click Auto Flip.</td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<td><a href="#1" onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>-->
-            <!--</td>-->
-            <!--<td>-->
-                <!--<input type="text" name="Plays" value="5000" title="Enter number for Auto Flip" size="6">-->
-                <!--<input type="button" value="Auto Flip" title="Flip the specified number of times" onclick="autoplay(pad.Plays.value)">-->
-                <!--<table>-->
-                    <!--<tbody>-->
-                        <!--<tr>-->
-                            <!--<td>Results:</td>-->
-                            <!--<td><input type="radio" name="Results" value="Session" onclick="sesstats()"> Session</td>-->
-                        <!--</tr>-->
-                        <!--<tr>-->
-                            <!--<td></td>-->
-                            <!--<td><input type="radio" name="Results" value="History" checked="" onclick="histstats()"> Historical</td>-->
-                        <!--</tr>-->
-                    <!--</tbody>-->
-                <!--</table>-->
-            <!--</td>-->
-                <!--</tr>-->
-                <!--</tbody>-->
-            <!--</table>-->
-
         </tab>
 
         <tab ng-repeat="tab in tabs" heading="{{tab.title}}" >

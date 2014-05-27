@@ -1,17 +1,66 @@
 'use strict';
 
 angular.module('ProbabilityApp')
-  .controller('MainCtrl', function ($scope) {
+  .controller('MainCtrl', function ($scope,$interval) {
 
         $scope.dice  = "DICE";
         $scope.coin  = "COIN";
         $scope.spin  = "SPIN";
         $scope.cards = "CARDS";
+        $scope.die1  = "styles/blank.gif";
+        $scope.die2  = "styles/blank.gif";
+
+        $scope.stop  = false;
+
+        $scope.rollingImgs = ["styles/dices-1.gif",
+            "styles/dices-2.gif",
+            "styles/dices-3.gif",
+            "styles/dices-4.gif",
+            "styles/dices-5.gif",
+            "styles/dices-6.gif",
+            "styles/dicet-1.gif",
+            "styles/dicet-2.gif",
+            "styles/dicet-3.gif",
+            "styles/dicet-4.gif",
+            "styles/dicet-5.gif",
+            "styles/dicet-6.gif"];
+
+        $scope.faces = [
+            "styles/die-1.gif",
+            "styles/die-2.gif",
+            "styles/die-3.gif",
+            "styles/die-4.gif",
+            "styles/die-5.gif",
+            "styles/die-6.gif"];
 
         $scope.tabs = [
             { title:'Cards', content:$scope.cards}
         ];
+
+
+
+        var rolling;
+        $scope.animateDice = function(){
+            if (!angular.isDefined(rolling)) {
+                rolling = $interval(function() {
+                    $scope.die1 = $scope.rollingImgs[Math.floor(Math.random()*$scope.rollingImgs.length)];
+                    $scope.die2 = $scope.rollingImgs[Math.floor(Math.random()*$scope.rollingImgs.length)];
+                }, 100);
+            }
+        }
+
+        $scope.stopDice = function(){
+            if (angular.isDefined(rolling)) {
+                $interval.cancel(rolling);
+                rolling = undefined;
+                $scope.die1 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+                $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+            }
+        }
     });
+
+
+
 
 /*
  Description:
@@ -528,7 +577,6 @@ function animate() {
         window.document.coin.src = cachedimages[framenum].src;
         flipping = null;
         report();
-        focus();
     }
     else
         flipping = setTimeout("animate()", 30);
@@ -553,6 +601,19 @@ function report(){
 
 
 
+
+function animateDice() {
+    framenum = (framecnt) % 4;
+    window.document.coin.src = cachedimages[pict[framenum]].src;
+    framecnt++;
+    if ((framecnt > 8) && (framenum == choice)) {
+        window.document.coin.src = cachedimages[framenum].src;
+        flipping = null;
+        report();
+    }
+    else
+        flipping = setTimeout("animate()", 30);
+}
 
 
 
