@@ -127,7 +127,7 @@ p.noCanvasMsg
 /**********************************/
 /*   MARBLES                      */
 /**********************************/
-#canvas {
+.throwingCanvas {
     display: block;
     border: 1px solid blue;
     margin: 50px auto;

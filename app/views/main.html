@@ -1,4 +1,4 @@
-<div ng-controller="MainCtrl" >
+<div>
     <h1>Probability Simulator</h1>
     <h2>Data Generators</h2>
     <tabset>
@@ -42,17 +42,23 @@
             </script>
         </tab>
         <tab heading="Dice">
-            <div id="dice_diceGroup_0" class="diceGroup">
-                <img  ng-src="{{die1}}">
-                <img  ng-src="{{die2}}">
-                <span id="sidebar_0" class="sidebar"></span>
+            <div ng-controller="DiceCtrl">
+                <button ng-click="dice()">Roll Dice</button>
+                <canvas id="dicecanvas" class="throwingCanvas"></canvas>
             </div>
-            <div id="diceform">
-                <form>
-                    <input type="button" value="Roll Dice" ng-click="animateDice()">
-                    <input type="button" value="Stop Dice" ng-click="stopDice()">
-                </form>
-            </div>
+
+
+            <!--<div id="dice_diceGroup_0" class="diceGroup">-->
+                <!--<img  ng-src="{{die1}}">-->
+                <!--<img  ng-src="{{die2}}">-->
+                <!--<span id="sidebar_0" class="sidebar"></span>-->
+            <!--</div>-->
+            <!--<div id="diceform">-->
+                <!--<form>-->
+                    <!--<input type="button" value="Roll Dice" ng-click="animateDice()">-->
+                    <!--<input type="button" value="Stop Dice" ng-click="stopDice()">-->
+                <!--</form>-->
+            <!--</div>-->
         </tab>
         <tab heading="Coin Toss">
             <a onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>
@@ -70,7 +76,7 @@
         <tab heading="Marbles">
             <div ng-controller="MarbleCtrl">
                 <button ng-click="marbles()">Marbles</button>
-                <canvas id="canvas"></canvas>
+                <canvas id="marblecanvas" class="throwingCanvas"></canvas>
             </div>
         </tab>
 

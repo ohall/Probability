@@ -3,16 +3,13 @@
 
 var app = angular.module('ProbabilityApp');
 
-app.controller('MainCtrl', function ($scope,$interval,$timeout) {
+app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 
-    $scope.dice  = "DICE";
-    $scope.coin  = "COIN";
-    $scope.spin  = "SPIN";
-    $scope.cards = "CARDS";
-    $scope.die1  = "styles/blank.gif";
-    $scope.die2  = "styles/blank.gif";
+    $scope.die1  = "styles/die-1.gif";
+    $scope.die2  = "styles/die-1.gif";
 
     $scope.stop  = false;
+
 
     var rollingImgs = [
         "styles/die-1.gif",
@@ -54,6 +51,71 @@ app.controller('MainCtrl', function ($scope,$interval,$timeout) {
         { title:'Cards', content:$scope.cards}
     ];
 
+    var canvas = document.getElementById("dicecanvas"),
+        ctx = canvas.getContext("2d");
+
+    var W = 350,
+        H = 450;
+
+    canvas.height = H; canvas.width = W;
+
+    var dice, i,
+        gravity = 0.2,
+        bounceFactor = 0.5,
+        running = false,
+        updates;
+
+    var drawer = function() {
+        var image = new Image;
+        image.src = $scope.die1;
+        ctx.drawImage(image, this.x, this.y);
+    };
+
+    function setDice(){
+        dice = [];
+        for(i=0;i<10;i++){
+            var iball = {
+                x: (W/10)*i + 15,
+                y: Math.floor(Math.random()*10),
+                height:32,
+                vx: 0,
+                vy: Math.floor(Math.random()*10),
+                draw: drawer
+            };
+            dice.push(iball);
+        }
+    }
+
+    $scope.dice = function(){
+        setDice();
+        $scope.animateDice();
+        function clearCanvas() {
+            ctx.clearRect(0, 0, W, H);
+        }
+        // A function that will update the position of the ball is also needed. Lets create one
+        function update() {
+            clearCanvas();
+            for(var i =0;i<dice.length;i++){
+                dice[i].draw();
+                dice[i].y += dice[i].vy;
+                dice[i].vy += gravity;
+                if(dice[i].y + dice[i].height > H) {
+                    dice[i].y = H - dice[i].height;
+                    dice[i].vy *= -bounceFactor;
+                }
+            }
+        }
+        if(!running){
+            running = true;
+            updates = $interval(update, 1000/60);
+        }else{
+            running = false;
+            $interval.cancel(updates);
+            updates = undefined;
+            clearCanvas();
+        }
+
+    };
 
 
     var diceIndices = {one:0,two:0};
@@ -63,10 +125,10 @@ app.controller('MainCtrl', function ($scope,$interval,$timeout) {
             rolling = $interval(function() {
                 faceIndex(diceIndices, rollingImgs);
                 $scope.die1 = rollingImgs[diceIndices.one];
-                $scope.die2 = rollingImgs[diceIndices.two];
-            }, 80);
+//                $scope.die2 = rollingImgs[diceIndices.two];
+            }, 60);
 
-            $timeout(function(){$scope.stopDice()},2000);
+            $timeout(function(){$scope.stopDice()},4000);
         }
 
         function faceIndex(indObj,array){
@@ -80,7 +142,7 @@ app.controller('MainCtrl', function ($scope,$interval,$timeout) {
             $interval.cancel(rolling);
             rolling = undefined;
             $scope.die1 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
-            $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
+//            $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
         }
     };
 
@@ -104,19 +166,13 @@ app.directive('backImg', function(){
 
 
 app.controller('MarbleCtrl', function ($scope,$interval){
-        // Now some basic canvas stuff. Here we'll make a variable for the canvas and then initialize its 2d context for drawing
-        var canvas = document.getElementById("canvas"),
+        var canvas = document.getElementById("marblecanvas"),
             ctx = canvas.getContext("2d");
 
-        // Now setting the width and height of the canvas
         var W = 350,
             H = 450;
 
-        // Applying these to the canvas element
         canvas.height = H; canvas.width = W;
-
-        // First of all we'll create a ball object which will contain all the methods and variables specific to the ball.
-        // Lets define some variables first
 
         var balls, i,
             gravity = 0.2,
