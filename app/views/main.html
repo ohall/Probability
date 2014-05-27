@@ -46,26 +46,13 @@
                 <button ng-click="dice()">Roll Dice</button>
                 <canvas id="dicecanvas" class="throwingCanvas"></canvas>
             </div>
-
-
-            <!--<div id="dice_diceGroup_0" class="diceGroup">-->
-                <!--<img  ng-src="{{die1}}">-->
-                <!--<img  ng-src="{{die2}}">-->
-                <!--<span id="sidebar_0" class="sidebar"></span>-->
-            <!--</div>-->
-            <!--<div id="diceform">-->
-                <!--<form>-->
-                    <!--<input type="button" value="Roll Dice" ng-click="animateDice()">-->
-                    <!--<input type="button" value="Stop Dice" ng-click="stopDice()">-->
-                <!--</form>-->
-            <!--</div>-->
         </tab>
         <tab heading="Coin Toss">
             <a onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>
         </tab>
 
         <tab heading="Cards">
-            <div class="flip-container" >
+            <div class="flip-container" ng-controller="CardCtrl" >
                 <div class="flipper">
                     <div class="front" ng-mouseover="newCard()"></div>
                     <div class="back" back-img img="{{card}}"></div>

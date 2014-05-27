@@ -10,7 +10,6 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 
     $scope.stop  = false;
 
-
     var rollingImgs = [
         "styles/die-1.gif",
         "styles/dices-1.gif",
@@ -47,9 +46,6 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         "styles/die-6.gif"
     ];
 
-    $scope.tabs = [
-        { title:'Cards', content:$scope.cards}
-    ];
 
     var canvas = document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d");
@@ -146,11 +142,16 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
     };
 
+
+});
+
+app.controller('CardCtrl', function ($scope,$interval){
     $scope.newCard = function(){
         $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
     };
-
 });
+
+
 
 app.directive('backImg', function(){
     return function (scope, element, attrs) {
