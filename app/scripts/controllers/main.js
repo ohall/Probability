@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('ProbabilityApp')
-  .controller('MainCtrl', function ($scope,$interval) {
+  .controller('MainCtrl', function ($scope,$interval,$timeout) {
 
         $scope.dice  = "DICE";
         $scope.coin  = "COIN";
@@ -12,18 +12,32 @@ angular.module('ProbabilityApp')
 
         $scope.stop  = false;
 
-        $scope.rollingImgs = ["styles/dices-1.gif",
+        var rollingImgs = [
+            "styles/die-1.gif",
+            "styles/dices-1.gif",
+            "styles/die-2.gif",
             "styles/dices-2.gif",
+            "styles/die-3.gif",
             "styles/dices-3.gif",
+            "styles/die-4.gif",
             "styles/dices-4.gif",
+            "styles/die-5.gif",
             "styles/dices-5.gif",
+            "styles/die-6.gif",
             "styles/dices-6.gif",
+            "styles/die-1.gif",
             "styles/dicet-1.gif",
+            "styles/die-2.gif",
             "styles/dicet-2.gif",
+            "styles/die-3.gif",
             "styles/dicet-3.gif",
+            "styles/die-4.gif",
             "styles/dicet-4.gif",
+            "styles/die-5.gif",
             "styles/dicet-5.gif",
-            "styles/dicet-6.gif"];
+            "styles/die-6.gif",
+            "styles/dicet-6.gif"
+        ];
 
         $scope.faces = [
             "styles/die-1.gif",
@@ -31,7 +45,8 @@ angular.module('ProbabilityApp')
             "styles/die-3.gif",
             "styles/die-4.gif",
             "styles/die-5.gif",
-            "styles/die-6.gif"];
+            "styles/die-6.gif"
+        ];
 
         $scope.tabs = [
             { title:'Cards', content:$scope.cards}
@@ -39,13 +54,22 @@ angular.module('ProbabilityApp')
 
 
 
+        var diceIndices = {one:0,two:0};
         var rolling;
         $scope.animateDice = function(){
             if (!angular.isDefined(rolling)) {
                 rolling = $interval(function() {
-                    $scope.die1 = $scope.rollingImgs[Math.floor(Math.random()*$scope.rollingImgs.length)];
-                    $scope.die2 = $scope.rollingImgs[Math.floor(Math.random()*$scope.rollingImgs.length)];
-                }, 100);
+                    faceIndex(diceIndices, rollingImgs);
+                    $scope.die1 = rollingImgs[diceIndices.one];
+                    $scope.die2 = rollingImgs[diceIndices.two];
+                }, 80);
+
+                $timeout(function(){$scope.stopDice()},2000);
+            }
+
+            function faceIndex(indObj,array){
+                indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
+                indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
             }
         }
 
