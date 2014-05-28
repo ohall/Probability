@@ -4,12 +4,6 @@
 var app = angular.module('ProbabilityApp');
 
 app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
-
-    $scope.die1  = "styles/die-1.gif";
-    $scope.die2  = "styles/die-1.gif";
-
-    $scope.stop  = false;
-
     var rollingImgs = [
         "styles/die-1.gif",
         "styles/dices-1.gif",
@@ -35,56 +29,72 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         "styles/dicet-5.gif",
         "styles/die-6.gif",
         "styles/dicet-6.gif"
-    ];
-
-    $scope.faces = [
+    ],
+        faces = [
         "styles/die-1.gif",
         "styles/die-2.gif",
         "styles/die-3.gif",
         "styles/die-4.gif",
         "styles/die-5.gif",
         "styles/die-6.gif"
-    ];
-
-
-    var canvas = document.getElementById("dicecanvas"),
-        ctx = canvas.getContext("2d");
-
-    var W = 350,
-        H = 450;
-
-    canvas.height = H; canvas.width = W;
-
-    var dice, i,
+        ],
+        canvas = document.getElementById("dicecanvas"),
+        ctx = canvas.getContext("2d"),
+        W = 350,
+        H = 450,
+        dice, i,
+        NUM_DICE = 4,
         gravity = 0.2,
         bounceFactor = 0.5,
         running = false,
-        updates;
+        updates,
+        stopRoll = false,
+        diceIndices = {one:0,two:0};
 
-    var drawer = function() {
+    canvas.height = H; canvas.width = W;
+
+    var drawFunc = function() {
         var image = new Image;
-        image.src = $scope.die1;
-        ctx.drawImage(image, this.x, this.y);
+        if(!stopRoll){//we're looping through die faces
+            faceIndex(diceIndices, rollingImgs);
+            image.src = rollingImgs[diceIndices.one];
+            ctx.drawImage(image, this.x, this.y);
+        }else{
+            if(!this.stopped) {//we're choosing a face to land on
+                image.src = faces[Math.floor(Math.random() * faces.length)];
+                this.stopped = true;
+                this.image = image;
+            }
+            //we're drawing with the chose face
+            ctx.drawImage(this.image, this.x, this.y);
+        }
     };
 
-    function setDice(){
+    function faceIndex(indObj,array){
+        indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
+        indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
+    }
+
+    function setDice(pdrawFunc){
+        stopRoll = false;
         dice = [];
-        for(i=0;i<10;i++){
+        for(i=0;i<NUM_DICE;i++){
             var iball = {
                 x: (W/10)*i + 15,
-                y: Math.floor(Math.random()*10),
+                y: Math.floor(Math.random()*NUM_DICE),
                 height:32,
+                stopped:false,
+                image:null,
                 vx: 0,
-                vy: Math.floor(Math.random()*10),
-                draw: drawer
+                vy: Math.floor(Math.random()*NUM_DICE),
+                draw: pdrawFunc
             };
             dice.push(iball);
         }
     }
 
     $scope.dice = function(){
-        setDice();
-        $scope.animateDice();
+        setDice(drawFunc);
         function clearCanvas() {
             ctx.clearRect(0, 0, W, H);
         }
@@ -110,116 +120,98 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             updates = undefined;
             clearCanvas();
         }
-
+        $timeout(function(){
+            stopRoll = true
+        },2500)
     };
 
 
-    var diceIndices = {one:0,two:0};
-    var rolling;
-    $scope.animateDice = function(){
-        if (!angular.isDefined(rolling)) {
-            rolling = $interval(function() {
-                faceIndex(diceIndices, rollingImgs);
-                $scope.die1 = rollingImgs[diceIndices.one];
-//                $scope.die2 = rollingImgs[diceIndices.two];
-            }, 60);
 
-            $timeout(function(){$scope.stopDice()},4000);
-        }
-
-        function faceIndex(indObj,array){
-            indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
-            indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
-        }
-    };
-
-    $scope.stopDice = function(){
-        if (angular.isDefined(rolling)) {
-            $interval.cancel(rolling);
-            rolling = undefined;
-            $scope.die1 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
-//            $scope.die2 = $scope.faces[Math.floor(Math.random()*$scope.faces.length)];
-        }
-    };
+//    $scope.animateDice = function(){
+//        if (!angular.isDefined(rolling)) {
+//            rolling = $interval(function() {
+//
+////                $scope.die2 = rollingImgs[diceIndices.two];
+//            }, 60);
+//
+//            $timeout(function(){$scope.stopDice()},4000);
+//        }
+//
+//
+//    };
+//
+//    $scope.stopDice = function(){
+//        if (angular.isDefined(rolling)) {
+//            $interval.cancel(rolling);
+//            rolling = undefined;
+//            $scope.die1 = faces[Math.floor(Math.random()*faces.length)];
+////            $scope.die2 = faces[Math.floor(Math.random()*faces.length)];
+//        }
+//    };
 
 
 });
 
-app.controller('CardCtrl', function ($scope,$interval){
+app.controller('CardCtrl', function ($scope){
     $scope.newCard = function(){
         $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
     };
 });
 
-
-
-app.directive('backImg', function(){
-    return function (scope, element, attrs) {
-        attrs.$observe('img', function(pUrl) {
-            element.css({
-                'background-image': 'url(' + pUrl + ')',
-                'background-size': 'cover'
-            });
-        });
-    };
-});
-
-
-
 app.controller('MarbleCtrl', function ($scope,$interval){
-        var canvas = document.getElementById("marblecanvas"),
-            ctx = canvas.getContext("2d");
+    var canvas = document.getElementById("marblecanvas"),
+        ctx = canvas.getContext("2d");
 
-        var W = 350,
-            H = 450;
+    var W = 350,
+        H = 450;
 
-        canvas.height = H; canvas.width = W;
+    canvas.height = H; canvas.width = W;
 
-        var balls, i,
-            gravity = 0.2,
-            bounceFactor = 0.8,
-            running = false,
-            updates;
+    var balls, i,
+        gravity = 0.2,
+        bounceFactor = 0.8,
+        running = false,
+        updates;
 
-        var colors = [
-            "red",
-            "blue",
-            "green",
-            "black",
-            "purple",
-            "orange",
-            "yellow",
-            "pink",
-            "brown",
-            "teal"
-        ];
+    var colors = [
+        "red",
+        "blue",
+        "green",
+        "black",
+        "purple",
+        "orange",
+        "yellow",
+        "pink",
+        "brown",
+        "teal"
+    ];
 
 
-        var drawer = function() {
-            // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-            ctx.fillStyle = this.color;
-            ctx.fill();
-            ctx.closePath();
-        };
+    var drawFunc = function() {
+        // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+        ctx.closePath();
+    };
 
-        function setBalls(){
-            balls = [];
-            for(i=0;i<10;i++){
-                var iball = {
-                    x: (W/10)*i + 15,
-                    y: Math.floor(Math.random()*10),
-                    radius: 15,
-                    color: colors[i],
-                    // Velocity components
-                    vx: 0,
-                    vy: Math.floor(Math.random()*10),
-                    draw: drawer
-                };
-                balls.push(iball);
-            }
+    function setBalls(){
+        balls = [];
+        for(i=0;i<10;i++){
+            var iball = {
+                x: (W/10)*i + 15,
+                y: Math.floor(Math.random()*10),
+                radius: 15,
+                color: colors[i],
+                // Velocity components
+                vx: 0,
+                vy: Math.floor(Math.random()*10),
+                draw: drawFunc
+            };
+            balls.push(iball);
         }
+    }
 
     $scope.marbles = function(){
         setBalls();
@@ -255,59 +247,74 @@ app.controller('MarbleCtrl', function ($scope,$interval){
 
 });
 
+app.controller("CoinCtrl", function ($scope,$timeout){
+
+    $scope.coinImage = "styles/heads.jpg";
+
+    var framenum = 0,
+        framecnt = 0,
+        flipping = null,
+        choice = 0,
+        headcnt = 0,
+        tailcnt = 0,
+        pict = new Array(3, 4, 1, 4),
+        cachedimages = new Array(5);
+
+    cachedimages[0] = new Image();
+    cachedimages[0].src = "styles/heads.jpg";
+    cachedimages[1] = new Image();
+    cachedimages[1].src = "styles/tailsma1.jpg";
+    cachedimages[2] = new Image();
+    cachedimages[2].src = "styles/tailsma.jpg";
+    cachedimages[3] = new Image();
+    cachedimages[3].src = "styles/heads1.jpg";
+    cachedimages[4] = new Image();
+    cachedimages[4].src = "styles/dist.jpg";
+
+
+    $scope.posclicked = function() {
+
+        if (flipping == null) {
+            if (Math.random() < 0.5) {
+                choice = 0;
+                headcnt++;
+            }else{
+                choice = 2;
+                tailcnt++;
+            }
+            framecnt = 0;
+            animate();
+        }
+    };
+
+    function animate() {
+        framenum = (framecnt) % 4;
+        $scope.coinImage = cachedimages[pict[framenum]].src;
+        framecnt++;
+        if ((framecnt > 8) && (framenum == choice)) {
+            $scope.coinImage = cachedimages[framenum].src;
+            flipping = null;
+        }else{
+            flipping = $timeout(animate(), 30);
+        }
+    }
+
+});
 
 
 
 
+app.directive('backImg', function(){
+    return function (scope, element, attrs) {
+        attrs.$observe('img', function(pUrl) {
+            element.css({
+                'background-image': 'url(' + pUrl + ')',
+                'background-size': 'cover'
+            });
+        });
+    };
+})
 
-
-
-
-
-
-
-
-
-
-
-/*
- Description:
- This script contains the functions to load the winning wheel image and do the rotation of it.
- By Douglas McKechie @ www.dougtesting.net
-
- Version History:
- 1.0 (2012-01-28)
- - Created based off earlier version.
-
- 1.1 (2013-04-23, though not released before on my site)
- - Added "Prize Detection" feature which works out the prize the user has won when the wheel stops.
- As part of this I changed the wheel graphic to contain less segments so easier to understand.
-
- 1.2 (2013-07-14)
- SIGNIFICANT UPDATE
- - Added "Pre-determined" feature which allows the result of the spin to be predetermined by a server side process,
- or other code, then when the wheel spins it will stop at this pre-determined location or prize rather than a random one.
-
- This required changes to the spinning code so instead of counting down until no rotations left it spins upwards
- until the target angle is met. Also needed to change the code that works out the power to just set the power level;
- the new startSpin() function sets the targetAngle based on the power.
-
- - Decided to improve the slowdown code by adjusting the way the thresholds that change the amount of angle rotated by are calculated.
- While doing this I hit on the idea of making the lower thresholds random between a specified range so is harder for user to
- predict what they will win (which will could happen after playing the wheel a few times if the last threshold is always the same).
-
- - Added ability to reset the wheel by adding resetWheel() function. Called by click on link under spin button in example wheel.
-
- - Also overhauled the declaration of the global variables, moving ones that developers can alter to the top, and moving ones
- that should not be altered to seperate section. Also updated most of the comements describing what the variables do.
-
- - Added check that power level is selected before the wheel will spin (previously you could click Spin with no power selected) and
- also added variable to store the current state of the wheel - if spinning or not - so click of spin button while wheel is already
- spinning has no effect.
- */
-
-// --------------------------------
-// VARIABLES YOU CAN ALTER...
 var canvasId         = "myDrawingCanvas";   // Id of the canvas element on the page the wheel is to be rendered on.
 var wheelImageName   = "styles/prizewheel.png";	// File name of the image for the wheel.
 var spinButtonImgOn  = "styles/spin_on.png";		// Name / path to the images for the spin button.
@@ -732,7 +739,6 @@ var headcnt = 0;
 var tailcnt = 0;
 var pict = new Array(3, 4, 1, 4);
 var cachedimages = new Array(5);
-var historical = true;
 cachedimages[0] = new Image();
 
 cachedimages[0].src = "styles//heads.jpg";
@@ -761,22 +767,6 @@ function posclicked() {
     }
 }
 
-function autoplay(iterations) {
-    automode = 1;
-    for (var i = 0; i < (iterations-1); i++)
-        posclicked(0);
-    automode = 0;
-    posclicked(0);
-}
-function sesstats() {
-    historical = false;
-    report();
-}
-function histstats() {
-    historical = true;
-    report();
-}
-
 function animate() {
     framenum = (framecnt) % 4;
     window.document.coin.src = cachedimages[pict[framenum]].src;
@@ -789,39 +779,9 @@ function animate() {
     else
         flipping = setTimeout("animate()", 30);
 }
-function report(){
-    if (historical) {
-        parent.reportframe.location = "report.php";
-    }
-    else {
-        parent.reportframe.document.open();
-        parent.reportframe.document.write('<table><tr><th colspan="3" align="left">Results:</th></tr><tr bgcolor="AAFFFF"><th align="left" width="60">Flip</th><th align="right" width="260">Session</th><th align="right" width="80">Expected</th></tr>');
-        parent.reportframe.document.write('<tr><td>Heads</td><td align="right">' +
-            Math.round((headcnt * 10000) / (headcnt+tailcnt)) / 100 + '% (' +
-            headcnt + '\/' + (headcnt+tailcnt) + ')' + '</td><td align="right">' +
-            '50% (1\/2)</td></tr><tr bgcolor="#DDDDDD"><td>Tails</td><td align="right">' +
-            Math.round((tailcnt * 10000) / (headcnt+tailcnt)) / 100 + '% (' +
-            tailcnt + '\/' + (headcnt+tailcnt) + ')' + '</td><td align="right">' +
-            '50% (1\/2)</td></tr></table>');
-        parent.reportframe.document.close();
-    }
-}
 
 
 
-
-function animateDice() {
-    framenum = (framecnt) % 4;
-    window.document.coin.src = cachedimages[pict[framenum]].src;
-    framecnt++;
-    if ((framecnt > 8) && (framenum == choice)) {
-        window.document.coin.src = cachedimages[framenum].src;
-        flipping = null;
-        report();
-    }
-    else
-        flipping = setTimeout("animate()", 30);
-}
 
 
 
