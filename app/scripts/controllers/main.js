@@ -57,7 +57,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         var image = new Image;
         if(!stopRoll){//we're looping through die faces
             faceIndex(diceIndices, rollingImgs);
-            image.src = rollingImgs[diceIndices.one];
+            image.src = rollingImgs[diceIndices.two];
             ctx.drawImage(image, this.x, this.y);
         }else{
             if(!this.stopped) {//we're choosing a face to land on
@@ -71,8 +71,8 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     };
 
     function faceIndex(indObj,array){
-        indObj.one = (indObj.one >= array.length )? 0 : indObj.one+1;
-        indObj.two = (indObj.two == 0 )? array.length : indObj.two-1;
+        indObj.one = ( indObj.one >= array.length-1 )? 0 : indObj.one+1;
+        indObj.two = ( indObj.two == 0 )? array.length : indObj.two-1;
     }
 
     function setDice(pdrawFunc){
