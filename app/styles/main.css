@@ -184,3 +184,23 @@ p.noCanvasMsg
     border: 1px solid blue;
     margin: 50px auto;
 }
+
+
+/**********************************/
+/*   DICE                         */
+/**********************************/
+
+.col{
+    height: 100%;
+}
+.col .leftCol{
+    padding: 20px;
+    width: 50%;
+    float: left;
+}
+
+.col .rightCol{
+    padding: 20px;
+    width: 50%;
+    float: left;
+}

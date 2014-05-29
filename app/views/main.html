@@ -42,9 +42,18 @@
             </script>
         </tab>
         <tab heading="Dice">
-            <div ng-controller="DiceCtrl">
-                <button ng-click="dice()">Roll Dice</button>
-                <canvas id="dicecanvas" class="throwingCanvas"></canvas>
+            <div class="col" ng-controller="DiceCtrl">
+                <div class="leftCol">
+                    <button ng-click="dice()">Roll Dice</button>
+                    <canvas id="dicecanvas" class="throwingCanvas"></canvas>
+                </div>
+                <div class="rightCol">
+                    <p>Results:</p>
+                    <hr>
+                    <p ng-repeat="result in diceResults">
+                       Die {{result.num}} |   {{result.rolls.join(", ")}}
+                    </p>
+                </div>
             </div>
         </tab>
         <tab heading="Coin Toss">
