@@ -193,24 +193,18 @@ app.controller('MarbleCtrl', function ($scope,$interval){
 
     canvas.height = H; canvas.width = W;
 
-    var balls, i,
+    var balls,
         gravity = 0.2,
         bounceFactor = 0.8,
         running = false,
-        updates;
+        updates,numballs=0;
 
-    var colors = [
-        "red",
-        "blue",
-        "green",
-        "black",
-        "purple",
-        "orange",
-        "yellow",
-        "pink",
-        "brown",
-        "teal"
-    ];
+    $scope.red = 0;
+    $scope.green = 0;
+    $scope.blue = 0;
+    $scope.yellow = 0;
+    $scope.orange = 0;
+    $scope.purple = 0;
 
 
     var drawFunc = function() {
@@ -223,20 +217,50 @@ app.controller('MarbleCtrl', function ($scope,$interval){
     };
 
     function setBalls(){
+        var i;
         balls = [];
-        for(i=0;i<10;i++){
-            var iball = {
-                x: (W/10)*i + 15,
-                y: Math.floor(Math.random()*10),
-                radius: 15,
-                color: colors[i],
-                // Velocity components
-                vx: 0,
-                vy: Math.floor(Math.random()*10),
-                draw: drawFunc
-            };
-            balls.push(iball);
+        numballs = 0;
+        for(i=0;i<$scope.red;i++){
+            balls.push(createBall("red"));
         }
+        for(i=0;i<$scope.green;i++){
+            balls.push(createBall("green"));
+        }
+        for(i=0;i<$scope.blue;i++){
+            balls.push(createBall("blue"));
+        }
+        for(i=0;i<$scope.yellow;i++){
+            balls.push(createBall("yellow"));
+        }
+        for(i=0;i<$scope.orange;i++){
+            balls.push(createBall("orange"));
+        }
+        for(i=0;i<$scope.purple;i++){
+            balls.push(createBall("purple"));
+        }
+    }
+
+    var createBall = function(color){
+        numballs++;
+        return {
+            x: (W/totalBalls())*numballs + 15,
+            y: Math.floor(Math.random()*10),
+            radius: 15,
+            color: color,
+            // Velocity components
+            vx: 0,
+            vy: Math.floor(Math.random()*10),
+            draw: drawFunc
+        };
+    };
+
+    var totalBalls = function(){
+        return  $scope.red +
+                $scope.green +
+                $scope.blue +
+                $scope.yellow +
+                $scope.orange +
+                $scope.purple;
     }
 
     $scope.marbles = function(){
@@ -318,7 +342,7 @@ app.controller("CoinCtrl", function ($scope,$interval) {
     }
 
     function coinImage(img){
-        $scope.coinImage = "styles/"+img+".jpg";
+        $scope.coinImage = "styles/"+img+".png";
     }
 
     function janimate(starting){

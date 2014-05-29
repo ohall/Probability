@@ -2,45 +2,6 @@
     <h1>Probability Simulator</h1>
     <h2>Data Generators</h2>
     <tabset>
-        <tab heading="Spinner">
-            <table cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                    <td>
-                        <div class="power_controls">
-                            <br />
-                            <br />
-                            <table class="power" cellpadding="10" cellspacing="0">
-                                <tr>
-                                    <th align="center">Power</th>
-                                </tr>
-                                <tr>
-                                    <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" id="pw1" onClick="powerSelected(1);">Low</td>
-                                </tr>
-                            </table>
-                            <br />
-                            <img id="spin_button" src="styles/spin_off.png" alt="Spin" onClick="startSpin();" />
-                            <br /><br />
-                            &nbsp;&nbsp;<a href="#" onClick="resetWheel(); return false;">Play Again</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(reset)
-                        </div>
-                    </td>
-                    <td width="438" height="582" class="the_wheel" align="center" valign="center">
-                        <canvas class="the_canvas" id="myDrawingCanvas" width="434" height="434">
-                            <p class="noCanvasMsg" align="center">Sorry, your browser doesn't support canvas.<br />Please try another.</p>
-                        </canvas>
-                    </td>
-                </tr>
-            </table>
-            <script>
-                // Call function to draw the wheel face at it's initial position.
-                begin();
-            </script>
-        </tab>
         <tab heading="Dice">
             <div class="col" ng-controller="DiceCtrl">
                 <div class="leftCol">
@@ -88,10 +49,63 @@
         </tab>
 
         <tab heading="Marbles">
-            <div ng-controller="MarbleCtrl">
-                <button ng-click="marbles()">Marbles</button>
-                <canvas id="marblecanvas" class="throwingCanvas"></canvas>
+            <div class="col" ng-controller="MarbleCtrl">
+               <div class="leftCol">
+                   <form ng-submit="marbles()">
+                        <p>Red:    <input ng-model="red" type="number" min="0" max="10"></p>
+                        <p>Green:  <input ng-model="green" type="number" min="0" max="10"></p>
+                        <p>Blue:   <input ng-model="blue" type="number" min="0" max="10"></p>
+                        <p>Yellow: <input ng-model="yellow" type="number" min="0" max="10"></p>
+                        <p>Orange: <input ng-model="orange" type="number" min="0" max="10"></p>
+                        <p>Purple: <input ng-model="purple" type="number" min="0" max="10"></p>
+                        <input type="submit" value="Run">
+                   </form>
+
+               </div>
+
+                <div class="rightCol" >
+                    <canvas id="marblecanvas" class="throwingCanvas"></canvas>
+                </div>
             </div>
+        </tab>
+        <tab heading="Spinner">
+            <table cellpadding="0" cellspacing="0" border="0">
+                <tr>
+                    <td>
+                        <div class="power_controls">
+                            <br />
+                            <br />
+                            <table class="power" cellpadding="10" cellspacing="0">
+                                <tr>
+                                    <th align="center">Power</th>
+                                </tr>
+                                <tr>
+                                    <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
+                                </tr>
+                                <tr>
+                                    <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
+                                </tr>
+                                <tr>
+                                    <td align="center" id="pw1" onClick="powerSelected(1);">Low</td>
+                                </tr>
+                            </table>
+                            <br />
+                            <img id="spin_button" src="styles/spin_off.png" alt="Spin" onClick="startSpin();" />
+                            <br /><br />
+                            &nbsp;&nbsp;<a href="#" onClick="resetWheel(); return false;">Play Again</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(reset)
+                        </div>
+                    </td>
+                    <td width="438" height="582" class="the_wheel" align="center" valign="center">
+                        <canvas class="the_canvas" id="myDrawingCanvas" width="434" height="434">
+                            <p class="noCanvasMsg" align="center">Sorry, your browser doesn't support canvas.<br />Please try another.</p>
+                        </canvas>
+                    </td>
+                </tr>
+            </table>
+            <script>
+                // Call function to draw the wheel face at it's initial position.
+                begin();
+            </script>
         </tab>
 
     </tabset>

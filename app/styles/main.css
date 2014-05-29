@@ -147,23 +147,23 @@ p.noCanvasMsg
 }
 
 .heads{
-    background-image: url("heads.jpg");
+    background-image: url("heads.png");
 }
 
 .tailsma1{
-    background-image: url("tailsma1.jpg");
+    background-image: url("tailsma1.png");
 }
 
 .tailsma{
-    background-image: url("tailsma.jpg");
+    background-image: url("tailsma.png");
 }
 
 .heads1{
-    background-image: url("heads1.jpg");
+    background-image: url("heads1.png");
 }
 
 .dist{
-    background-image: url("dist.jpg");
+    background-image: url("dist.png");
 }
 
 .flipup{
