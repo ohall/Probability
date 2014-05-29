@@ -48,13 +48,17 @@
             </div>
         </tab>
         <tab heading="Coin Toss">
-                <a onclick="posclicked(0)"><img src="styles/heads.jpg" name="coin" title="Click here to flip the coin" height="150" width="150"></a>
+            <div ng-controller="CoinCtrl" ng-click="posclicked()">
+                <div id="coin" class="coin">
+                    <img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>
+                </div>
+            </div>
         </tab>
 
         <tab heading="Cards">
             <div class="flip-container" ng-controller="CardCtrl" >
-                <div class="flipper">
-                    <div class="front" ng-mouseover="newCard()"></div>
+                <div class="flipper" ng-click="flip()">
+                    <div class="front"></div>
                     <div class="back" back-img img="{{card}}"></div>
                 </div>
             </div>

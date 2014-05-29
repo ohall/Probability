@@ -79,11 +79,17 @@ p.noCanvasMsg
 
 /* entire container, keeps perspective */
 .flip-container {
+    margin: 100px;
     perspective: 1000;
     -webkit-perspective: 1000;
 }
 /* flip the pane when hovered */
-.flip-container:hover .flipper, .flip-container.hover .flipper {
+/*.flip-container:hover .flipper, .flip-container.hover .flipper {*/
+    /*transform: rotateY(180deg);*/
+    /*-webkit-transform: rotateY(180deg);*/
+/*}*/
+
+.flipit{
     transform: rotateY(180deg);
     -webkit-transform: rotateY(180deg);
 }
@@ -122,6 +128,52 @@ p.noCanvasMsg
 .back {
     transform: rotateY(180deg);
     -webkit-transform: rotateY(180deg);
+}
+
+
+
+/**********************************/
+/*   COIN                         */
+/**********************************/
+.coin{
+    margin: 100px;
+    height: 150px;
+    width: 150px;
+    transition-duration:200ms;
+    -ms-transition-duration:200ms;
+    -webkit-transition-duration:200ms;
+    -o-transition-duration:200ms;
+    -moz-transition-duration:200ms;
+}
+
+.heads{
+    background-image: url("heads.jpg");
+}
+
+.tailsma1{
+    background-image: url("tailsma1.jpg");
+}
+
+.tailsma{
+    background-image: url("tailsma.jpg");
+}
+
+.heads1{
+    background-image: url("heads1.jpg");
+}
+
+.dist{
+    background-image: url("dist.jpg");
+}
+
+.flipup{
+    transform:scale(1.5,1.5) rotateX(360deg);
+    -ms-transform:scale(1.5,1.5) rotateX(360deg); /* IE 9 */
+    -webkit-transform:scale(1.5,1.5) rotateX(360deg); /* Safari and Chrome */
+    -o-transform:scale(1.5,1.5) rotateX(360deg); /* Opera */
+    -moz-transform:scale(1.5,1.5) rotateX(360deg); /* Firefox */
+
+
 }
 
 /**********************************/

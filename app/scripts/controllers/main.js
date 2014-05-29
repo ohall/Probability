@@ -153,9 +153,22 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 });
 
 app.controller('CardCtrl', function ($scope){
-    $scope.newCard = function(){
-        $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
-    };
+    var flipped = false;
+
+//    $scope.newCard = function(){
+//    };
+
+
+    $scope.flip = function(){
+        if(!flipped){
+            $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
+            $('.flipper').addClass('flipit');
+            flipped = true;
+        }else{
+            $('.flipper').removeClass('flipit');
+            flipped = false;
+        }
+    }
 });
 
 app.controller('MarbleCtrl', function ($scope,$interval){
@@ -247,9 +260,8 @@ app.controller('MarbleCtrl', function ($scope,$interval){
 
 });
 
-app.controller("CoinCtrl", function ($scope,$timeout){
-
-    $scope.coinImage = "styles/heads.jpg";
+app.controller("CoinCtrl", function ($scope,$interval) {
+    coinImage("heads");
 
     var framenum = 0,
         framecnt = 0,
@@ -258,49 +270,49 @@ app.controller("CoinCtrl", function ($scope,$timeout){
         headcnt = 0,
         tailcnt = 0,
         pict = new Array(3, 4, 1, 4),
-        cachedimages = new Array(5);
-
-    cachedimages[0] = new Image();
-    cachedimages[0].src = "styles/heads.jpg";
-    cachedimages[1] = new Image();
-    cachedimages[1].src = "styles/tailsma1.jpg";
-    cachedimages[2] = new Image();
-    cachedimages[2].src = "styles/tailsma.jpg";
-    cachedimages[3] = new Image();
-    cachedimages[3].src = "styles/heads1.jpg";
-    cachedimages[4] = new Image();
-    cachedimages[4].src = "styles/dist.jpg";
-
+        cachedimages = ["heads","tailsma1","tailsma","heads1","dist"];
 
     $scope.posclicked = function() {
-
-        if (flipping == null) {
+        janimate(true);
+        if (flipping === null) {
             if (Math.random() < 0.5) {
                 choice = 0;
                 headcnt++;
-            }else{
+            }else {
                 choice = 2;
                 tailcnt++;
             }
             framecnt = 0;
-            animate();
+            flipping = $interval(ani, 30);
         }
     };
 
-    function animate() {
+    function ani() {
         framenum = (framecnt) % 4;
-        $scope.coinImage = cachedimages[pict[framenum]].src;
+        coinImage(cachedimages[pict[framenum]]);
         framecnt++;
-        if ((framecnt > 8) && (framenum == choice)) {
-            $scope.coinImage = cachedimages[framenum].src;
+        if ((framecnt > 8) && (framenum === choice) ) {
+            janimate(false);
+            coinImage(cachedimages[choice]);
+            $interval.cancel(flipping);
             flipping = null;
-        }else{
-            flipping = $timeout(animate(), 30);
         }
     }
 
-});
+    function coinImage(img){
+        $scope.coinImage = "styles/"+img+".jpg";
+    }
 
+    function janimate(starting){
+        if(starting){
+            $('#coin').addClass('flipup');
+        }else{
+            $('#coin').removeClass('flipup');
+        }
+
+    }
+
+});
 
 
 
@@ -313,7 +325,7 @@ app.directive('backImg', function(){
             });
         });
     };
-})
+});
 
 var canvasId         = "myDrawingCanvas";   // Id of the canvas element on the page the wheel is to be rendered on.
 var wheelImageName   = "styles/prizewheel.png";	// File name of the image for the wheel.
@@ -719,66 +731,6 @@ function resetWheel()
     initialDraw();
 }
 
-
-
-
-
-
-
-
-
-//-----------------------------------------------
-// Coin Flip
-//-----------------------------------------------
-
-var framenum = 0;
-var framecnt = 0;
-var flipping = null;
-var choice = 0;
-var headcnt = 0;
-var tailcnt = 0;
-var pict = new Array(3, 4, 1, 4);
-var cachedimages = new Array(5);
-cachedimages[0] = new Image();
-
-cachedimages[0].src = "styles//heads.jpg";
-cachedimages[1] = new Image();
-cachedimages[1].src = "styles/tailsma1.jpg";
-cachedimages[2] = new Image();
-cachedimages[2].src = "styles/tailsma.jpg";
-cachedimages[3] = new Image();
-cachedimages[3].src = "styles/heads1.jpg";
-cachedimages[4] = new Image();
-cachedimages[4].src = "styles/dist.jpg";
-
-function posclicked() {
-
-    if (flipping == null) {
-        if (Math.random() < 0.5) {
-            choice = 0;
-            headcnt++;
-        }
-        else {
-            choice = 2;
-            tailcnt++;
-        }
-        framecnt = 0;
-        animate();
-    }
-}
-
-function animate() {
-    framenum = (framecnt) % 4;
-    window.document.coin.src = cachedimages[pict[framenum]].src;
-    framecnt++;
-    if ((framecnt > 8) && (framenum == choice)) {
-        window.document.coin.src = cachedimages[framenum].src;
-        flipping = null;
-        report();
-    }
-    else
-        flipping = setTimeout("animate()", 30);
-}
 
 
 
