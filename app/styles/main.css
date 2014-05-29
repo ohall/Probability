@@ -191,6 +191,7 @@ p.noCanvasMsg
 /**********************************/
 
 .col{
+    font-size: large;
     height: 100%;
 }
 .col .leftCol{

@@ -41,7 +41,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         canvas = document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d"),
         W = 350,
-        H = 450,
+        H = 350,
         dice, i,
         NUM_DICE = 4,
         gravity = 0.2,
@@ -52,6 +52,18 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         diceIndices = {one:0,two:0};
 
     canvas.height = H; canvas.width = W;
+    $scope.diceResults = [];
+
+    setup();
+
+    function setup(){
+        for(var i = 0;i<NUM_DICE;i++){
+            var d = {};
+            d.num = i+1;
+            d.rolls = [];
+            $scope.diceResults.push(d);
+        }
+    };
 
     var drawFunc = function() {
         var image = new Image;
@@ -61,7 +73,9 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             ctx.drawImage(image, this.x, this.y);
         }else{
             if(!this.stopped) {//we're choosing a face to land on
-                image.src = faces[Math.floor(Math.random() * faces.length)];
+                var resultIndex = Math.floor(Math.random() * faces.length);
+                image.src = faces[resultIndex];
+                this.rolls.push(resultIndex+1)
                 this.stopped = true;
                 this.image = image;
             }
@@ -84,6 +98,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
                 y: Math.floor(Math.random()*NUM_DICE),
                 height:32,
                 stopped:false,
+                rolls:$scope.diceResults[i].rolls,
                 image:null,
                 vx: 0,
                 vy: Math.floor(Math.random()*NUM_DICE),
@@ -154,14 +169,24 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 
 app.controller('CardCtrl', function ($scope){
     var flipped = false;
+    var numCards = 52;
 
-//    $scope.newCard = function(){
-//    };
+    var numbers = [
+        "Ace","King","Queen","Jack",
+        "10","9","8","7","6","5","4","3","2"
+    ];
 
+    var suits = ["Clubs", "Spades", "Hearts", "Diamonds" ];
+
+    $scope.results = [];
 
     $scope.flip = function(){
         if(!flipped){
-            $scope.card ="styles/cards/" + Math.floor(Math.random()*52) + ".png";
+            var card = Math.floor(Math.random()*numCards)+1;
+            $scope.card ="styles/cards/" + card + ".png";
+            var num = Math.floor(card/suits.length);
+            var suit = (card%suits.length)===0?3:card%suits.length-1;
+            $scope.results.push( numbers[num] + " of " + suits[suit] )
             $('.flipper').addClass('flipit');
             flipped = true;
         }else{
@@ -272,6 +297,9 @@ app.controller("CoinCtrl", function ($scope,$interval) {
         pict = new Array(3, 4, 1, 4),
         cachedimages = ["heads","tailsma1","tailsma","heads1","dist"];
 
+    $scope.tailsCount = 0;
+    $scope.headsCount = 0;
+
     $scope.posclicked = function() {
         janimate(true);
         if (flipping === null) {
@@ -296,6 +324,8 @@ app.controller("CoinCtrl", function ($scope,$interval) {
             coinImage(cachedimages[choice]);
             $interval.cancel(flipping);
             flipping = null;
+            $scope.tailsCount = tailcnt;
+            $scope.headsCount = headcnt;
         }
     }
 

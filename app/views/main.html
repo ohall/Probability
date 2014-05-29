@@ -57,18 +57,32 @@
             </div>
         </tab>
         <tab heading="Coin Toss">
-            <div ng-controller="CoinCtrl" ng-click="posclicked()">
-                <div id="coin" class="coin">
-                    <img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>
+            <div class="col" ng-controller="CoinCtrl" ng-click="posclicked()">
+                <div class="leftCol">
+                    <div id="coin" class="coin">
+                        <img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>
+                    </div>
+                </div>
+                <div class="rightCol">
+                    <p>Heads: {{headsCount}}</p>
+                    <p>Tails: {{tailsCount}}</p>
                 </div>
             </div>
         </tab>
 
         <tab heading="Cards">
-            <div class="flip-container" ng-controller="CardCtrl" >
-                <div class="flipper" ng-click="flip()">
-                    <div class="front"></div>
-                    <div class="back" back-img img="{{card}}"></div>
+            <div class="col" ng-controller="CardCtrl">
+                <div class="leftCol">
+                    <div class="flip-container" >
+                        <div class="flipper" ng-click="flip()">
+                            <div class="front"></div>
+                            <div class="back" back-img img="{{card}}"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rightCol">
+                    <p>Cards Drawn:</p>
+                    <p ng-repeat="card in results track by $index"> {{card}} </p>
                 </div>
             </div>
         </tab>
