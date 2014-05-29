@@ -38,7 +38,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         "styles/die-5.gif",
         "styles/die-6.gif"
         ],
-        canvas = document.getElementById("dicecanvas"),
+        canvas =  document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d"),
         W = 350,
         H = 350,
@@ -47,9 +47,8 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         gravity = 0.2,
         bounceFactor = 0.5,
         running = false,
-        updates,
-        stopRoll = false,
-        diceIndices = {one:0,two:0};
+        updates,numupdates=0,
+        stopRoll = false;
 
     canvas.height = H; canvas.width = W;
     $scope.diceResults = [];
@@ -63,19 +62,20 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             d.rolls = [];
             $scope.diceResults.push(d);
         }
-    };
+    }
 
     var drawFunc = function() {
         var image = new Image;
+
         if(!stopRoll){//we're looping through die faces
-            faceIndex(diceIndices, rollingImgs);
-            image.src = rollingImgs[diceIndices.two];
+            this.index = getDieAnimationImage(this.direction,this.index);
+            image.src = rollingImgs[this.index];
             ctx.drawImage(image, this.x, this.y);
         }else{
             if(!this.stopped) {//we're choosing a face to land on
                 var resultIndex = Math.floor(Math.random() * faces.length);
                 image.src = faces[resultIndex];
-                this.rolls.push(resultIndex+1)
+                this.rolls.push(resultIndex+1);
                 this.stopped = true;
                 this.image = image;
             }
@@ -84,27 +84,36 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
     };
 
-    function faceIndex(indObj,array){
-        indObj.one = ( indObj.one >= array.length-1 )? 0 : indObj.one+1;
-        indObj.two = ( indObj.two == 0 )? array.length : indObj.two-1;
+    var getDieAnimationImage =  function(directionInt,index){
+        if(numupdates%6===0){
+            if(angular.isNumber(directionInt) && (directionInt % 2 == 0)){
+                return ( index === 0 ) ? rollingImgs.length-1 : index-1;
+            }else{//spin other direction
+                return ( index === rollingImgs.length-1 ) ? 0 : index+1;
+            }
+        }else{
+            return index;
+        }
     }
 
     function setDice(pdrawFunc){
         stopRoll = false;
         dice = [];
         for(i=0;i<NUM_DICE;i++){
-            var iball = {
+            var die = {
                 x: (W/10)*i + 15,
                 y: Math.floor(Math.random()*NUM_DICE),
                 height:32,
                 stopped:false,
                 rolls:$scope.diceResults[i].rolls,
+                index:i,
+                direction:i,
                 image:null,
                 vx: 0,
                 vy: Math.floor(Math.random()*NUM_DICE),
                 draw: pdrawFunc
             };
-            dice.push(iball);
+            dice.push(die);
         }
     }
 
@@ -113,8 +122,9 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         function clearCanvas() {
             ctx.clearRect(0, 0, W, H);
         }
-        // A function that will update the position of the ball is also needed. Lets create one
+
         function update() {
+            numupdates++;
             clearCanvas();
             for(var i =0;i<dice.length;i++){
                 dice[i].draw();
@@ -126,8 +136,10 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
                 }
             }
         }
+
         if(!running){
             running = true;
+            numupdates = 0
             updates = $interval(update, 1000/60);
         }else{
             running = false;
@@ -135,65 +147,41 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             updates = undefined;
             clearCanvas();
         }
+
         $timeout(function(){
             stopRoll = true
         },2500)
     };
-
-
-
-//    $scope.animateDice = function(){
-//        if (!angular.isDefined(rolling)) {
-//            rolling = $interval(function() {
-//
-////                $scope.die2 = rollingImgs[diceIndices.two];
-//            }, 60);
-//
-//            $timeout(function(){$scope.stopDice()},4000);
-//        }
-//
-//
-//    };
-//
-//    $scope.stopDice = function(){
-//        if (angular.isDefined(rolling)) {
-//            $interval.cancel(rolling);
-//            rolling = undefined;
-//            $scope.die1 = faces[Math.floor(Math.random()*faces.length)];
-////            $scope.die2 = faces[Math.floor(Math.random()*faces.length)];
-//        }
-//    };
-
-
 });
 
 app.controller('CardCtrl', function ($scope){
-    var flipped = false;
-    var numCards = 52;
-
-    var numbers = [
-        "Ace","King","Queen","Jack",
-        "10","9","8","7","6","5","4","3","2"
-    ];
-
-    var suits = ["Clubs", "Spades", "Hearts", "Diamonds" ];
+    var flipped = false,
+        NUM_CARDS = 52;
 
     $scope.results = [];
 
     $scope.flip = function(){
         if(!flipped){
-            var card = Math.floor(Math.random()*numCards)+1;
+            var card = Math.floor(Math.random()*NUM_CARDS)+1;
             $scope.card ="styles/cards/" + card + ".png";
-            var num = Math.floor(card/suits.length);
-            var suit = (card%suits.length)===0?3:card%suits.length-1;
-            $scope.results.push( numbers[num] + " of " + suits[suit] )
+            $scope.results.push( getCardString(card) );
             $('.flipper').addClass('flipit');
             flipped = true;
         }else{
             $('.flipper').removeClass('flipit');
             flipped = false;
         }
-    }
+    };
+
+    var getCardString = function(cardInt){
+        var numbers = [ "Ace","King","Queen","Jack",
+            "10","9","8","7","6","5","4","3","2"],
+            suits   = ["Clubs", "Spades", "Hearts", "Diamonds" ],
+            region  = cardInt/suits.length,
+            num     = ( region%1===0 ) ? region-1 : Math.floor(region),
+            suit    = ( ( cardInt%suits.length ) === 0 ) ? 3 : cardInt%suits.length-1;
+        return numbers[num] + " of " + suits[suit];
+    };
 });
 
 app.controller('MarbleCtrl', function ($scope,$interval){

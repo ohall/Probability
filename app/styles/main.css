@@ -205,3 +205,11 @@ p.noCanvasMsg
     width: 50%;
     float: left;
 }
+
+.roll{
+    transform:rotate(180deg);
+    -ms-transform:rotate(180deg); /* IE 9 */
+    -webkit-transform:rotate(180deg); /* Safari and Chrome */
+    -o-transform:rotate(180deg); /* Opera */
+    -moz-transform:rotate(180deg); /* Firefox */
+}
