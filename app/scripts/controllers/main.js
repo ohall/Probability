@@ -47,7 +47,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         gravity = 0.2,
         bounceFactor = 0.5,
         running = false,
-        updates,numupdates=0,
+        updates,timer,numupdates=0,
         stopRoll = false;
 
     canvas.height = H; canvas.width = W;
@@ -119,8 +119,18 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 
     $scope.dice = function(){
         setDice(drawFunc);
+        if(timer){
+            $timeout.cancel(timer);
+            timer = undefined;
+        }
         function clearCanvas() {
             ctx.clearRect(0, 0, W, H);
+        }
+
+        function stop(){
+            running = false;
+            $interval.cancel(updates);
+            updates = undefined;
         }
 
         function update() {
@@ -142,15 +152,15 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             numupdates = 0;
             updates = $interval(update, 1000/60);
         }else{
-            running = false;
-            $interval.cancel(updates);
-            updates = undefined;
+            stop()
             clearCanvas();
         }
 
         $timeout(function(){
-            stopRoll = true
-        },2500)
+            stopRoll = true;
+        },2500);
+
+        timer = $timeout(stop,3000);
     };
 });
 
@@ -185,7 +195,7 @@ app.controller('CardCtrl', function ($scope){
     };
 });
 
-app.controller('MarbleCtrl', function ($scope,$interval){
+app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     var canvas = document.getElementById("marblecanvas"),
         ctx = canvas.getContext("2d");
 
@@ -198,14 +208,16 @@ app.controller('MarbleCtrl', function ($scope,$interval){
         gravity = 0.2,
         bounceFactor = 0.8,
         running = false,
-        updates,numballs=0;
+        updates,timer,numballs=0;
 
-    $scope.red = 0;
-    $scope.green = 0;
-    $scope.blue = 0;
-    $scope.yellow = 0;
-    $scope.orange = 0;
-    $scope.purple = 0;
+    $scope.red = 1;
+    $scope.green = 1;
+    $scope.blue = 1;
+    $scope.yellow = 1;
+    $scope.orange = 1;
+    $scope.purple = 1;
+
+    $scope.binnedBalls = [];
 
 
     var drawFunc = function() {
@@ -266,11 +278,16 @@ app.controller('MarbleCtrl', function ($scope,$interval){
 
     $scope.marbles = function(){
         setBalls();
+        if(timer){
+            $timeout.cancel(timer);
+            timer = undefined;
+        }
         function clearCanvas() {
             ctx.clearRect(0, 0, W, H);
         }
         // A function that will update the position of the ball is also needed. Lets create one
         function update() {
+
             clearCanvas();
             for(var i =0;i<balls.length;i++){
                 balls[i].draw();
@@ -282,19 +299,34 @@ app.controller('MarbleCtrl', function ($scope,$interval){
                 }
             }
         }
-        if(!running){
-            running = true;
-            // Now, the animation time!
-            // in setInterval, 1000/x depicts x fps! So, in this casse, we are aiming for 60fps for smoother animations.
-            updates = $interval(update, 1000/60);
-        }else{
+
+        function done(){
+            stop();
+            var selectedBall = balls[ Math.floor(Math.random() * balls.length)];
+            $scope.binnedBalls.push('background-color:'+selectedBall.color);
+            selectedBall.color = "white";
+            update();
+        }
+
+        function stop(){
             running = false;
             $interval.cancel(updates);
             updates = undefined;
-            clearCanvas();
+
         }
 
+        if(!running){
+            running = true;
+            updates = $interval(update, 1000/60);
+        }else{
+            stop();
+            clearCanvas();
+        }
+        timer = $timeout(done,1500);
     };
+
+
+
 
 });
 

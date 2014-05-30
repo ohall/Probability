@@ -65,6 +65,12 @@
 
                 <div class="rightCol" >
                     <canvas id="marblecanvas" class="throwingCanvas"></canvas>
+                    <div>
+                        <label>Bin</label>
+                        <span ng-repeat="ball in binnedBalls track by $index">
+                            <div class="circle" style="{{ball}}"/>
+                        </span>
+                    </div>
                 </div>
             </div>
         </tab>

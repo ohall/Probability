@@ -122,8 +122,21 @@
     display: block;
     border: 1px solid blue;
     margin: 50px auto;
+    float: right;
 }
 
+.circle{
+    width:30px;
+    height:30px;
+    border-radius:15px;
+    margin: 10px;
+}
+
+.circleFrame{
+    width: 50px;
+    display: inline-block;
+
+}
 
 /**********************************/
 /*   DICE                         */
