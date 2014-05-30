@@ -158,6 +158,7 @@ app.controller('CardCtrl', function ($scope){
     var flipped = false,
         NUM_CARDS = 52;
 
+    $scope.back = "styles/cards/b1fv.png"
     $scope.results = [];
 
     $scope.flip = function(){
@@ -498,7 +499,7 @@ app.directive('backImg', function(){
         attrs.$observe('img', function(pUrl) {
             element.css({
                 'background-image': 'url(' + pUrl + ')',
-                'background-size': 'cover'
+                'background-repeat': 'no-repeat'
             });
         });
     };

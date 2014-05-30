@@ -23,7 +23,7 @@
 
 /* entire container, keeps perspective */
 .flip-container {
-    margin: 100px;
+    margin: 0px;
     perspective: 1000;
     -webkit-perspective: 1000;
 }
@@ -34,8 +34,8 @@
 }
 
 .flip-container, .front, .back {
-    width: 71px;
-    height: 96px;
+    width: 600px;
+    height: 800px;
 }
 
 /* flip speed goes here */
