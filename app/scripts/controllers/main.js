@@ -256,7 +256,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     var createBall = function(color){
         numballs++;
         return {
-            x: (W/totalBalls())*numballs + 15,
+            x: (W/totalBalls())*numballs-20,
             y: Math.floor(Math.random()*10),
             radius: 15,
             color: color,
