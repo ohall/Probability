@@ -30,7 +30,6 @@
                 </div>
             </div>
         </tab>
-
         <tab heading="Cards">
             <div class="col" ng-controller="CardCtrl">
                 <div class="leftCol">
@@ -43,21 +42,22 @@
                 </div>
                 <div class="rightCol">
                     <p>Cards Drawn:</p>
-                    <p ng-repeat="card in results"> {{card}} </p>
+                    <p ng-repeat="card in results track by $index"> {{card}} </p>
                 </div>
             </div>
         </tab>
-
         <tab heading="Marbles">
             <div class="col" ng-controller="MarbleCtrl">
                <div class="leftCol">
                    <form ng-submit="marbles()">
-                        <p>Red:    <input ng-model="red" type="number" min="0" max="10"></p>
-                        <p>Green:  <input ng-model="green" type="number" min="0" max="10"></p>
-                        <p>Blue:   <input ng-model="blue" type="number" min="0" max="10"></p>
-                        <p>Yellow: <input ng-model="yellow" type="number" min="0" max="10"></p>
-                        <p>Orange: <input ng-model="orange" type="number" min="0" max="10"></p>
-                        <p>Purple: <input ng-model="purple" type="number" min="0" max="10"></p>
+                        <p>
+                            <label>Red:</label><input ng-model="red" type="number" min="0" max="10">
+                        </p>
+                        <p><label>Green:  </label><input ng-model="green" type="number" min="0" max="10"></p>
+                        <p><label>Blue:   </label><input ng-model="blue" type="number" min="0" max="10"></p>
+                        <p><label>Yellow: </label><input ng-model="yellow" type="number" min="0" max="10"></p>
+                        <p><label>Orange: </label><input ng-model="orange" type="number" min="0" max="10"></p>
+                        <p><label>Purple: </label><input ng-model="purple" type="number" min="0" max="10"></p>
                         <input type="submit" value="Run">
                    </form>
 
@@ -69,44 +69,28 @@
             </div>
         </tab>
         <tab heading="Spinner">
-            <table cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                    <td>
-                        <div class="power_controls">
-                            <br />
-                            <br />
-                            <table class="power" cellpadding="10" cellspacing="0">
-                                <tr>
-                                    <th align="center">Power</th>
-                                </tr>
-                                <tr>
-                                    <td width="78" align="center" id="pw3" onClick="powerSelected(3);">High</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" id="pw2" onClick="powerSelected(2);">Med</td>
-                                </tr>
-                                <tr>
-                                    <td align="center" id="pw1" onClick="powerSelected(1);">Low</td>
-                                </tr>
-                            </table>
-                            <br />
-                            <img id="spin_button" src="styles/spin_off.png" alt="Spin" onClick="startSpin();" />
-                            <br /><br />
-                            &nbsp;&nbsp;<a href="#" onClick="resetWheel(); return false;">Play Again</a><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(reset)
-                        </div>
-                    </td>
-                    <td width="438" height="582" class="the_wheel" align="center" valign="center">
-                        <canvas class="the_canvas" id="myDrawingCanvas" width="434" height="434">
-                            <p class="noCanvasMsg" align="center">Sorry, your browser doesn't support canvas.<br />Please try another.</p>
-                        </canvas>
-                    </td>
-                </tr>
-            </table>
-            <script>
-                // Call function to draw the wheel face at it's initial position.
-                begin();
-            </script>
+            <div class="col" ng-controller="SpinCtrl" ng-init="begin()">
+                <div class="leftCol">
+                    <div style="float: left" style="width:100px">
+                        <form ng-submit="startSpin()" >
+                            <label>Power</label><br/>
+                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="3">  High   <br/>
+                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="2">  Medium <br/>
+                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="1">  Low    <br/>
+                            <input ng-disabled="wheelState!='reset'" type="submit" value="Spin" >
+                        </form>
+                        <br><br><br><br>
+                        <input type="button" value="Reset" ng-click="resetWheel()" />
+                    </div>
+                    <div class="the_wheel" align="center" valign="center">
+                        <canvas class="the_canvas" id="myDrawingCanvas" width="434" height="434"></canvas>
+                    </div>
+               </div>
+                <div class="rightCol">
+                    <p>Spin History:</p>
+                    <p ng-repeat="result in results track by $index"> {{result}} </p>
+                </div>
+            </div>
         </tab>
-
     </tabset>
 </div>
