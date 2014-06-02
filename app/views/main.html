@@ -18,9 +18,14 @@
             </div>
         </tab>
         <tab heading="Coin Toss">
-            <div class="col" ng-controller="CoinCtrl" ng-click="posclicked()">
+            <div class="col" ng-controller="CoinCtrl" >
                 <div class="leftCol">
-                    <div id="coin" class="coin">
+                    <form>
+                        <p><label> WEIGHT </label></p>
+                        <p><label>Heads:</label><input min="0" max="100" type="number" ng-model="tailsWeight" />%</p>
+                        <p><label>Tails:</label><input min="0" max="100" type="number" ng-model="headsWeight" />%</p>
+                    </form>
+                    <div id="coin" class="coin" ng-click="posclicked()">
                         <img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>
                     </div>
                 </div>
@@ -50,9 +55,7 @@
             <div class="col" ng-controller="MarbleCtrl">
                <div class="leftCol" style="width: 200px;">
                    <form ng-submit="marbles()">
-                        <p>
-                            <label>Red:</label><input ng-model="red" type="number" min="0" max="10">
-                        </p>
+                        <p><label>Red:</label><input ng-model="red" type="number" min="0" max="10"></p>
                         <p><label>Green:  </label><input ng-model="green" type="number" min="0" max="10"></p>
                         <p><label>Blue:   </label><input ng-model="blue" type="number" min="0" max="10"></p>
                         <p><label>Yellow: </label><input ng-model="yellow" type="number" min="0" max="10"></p>
@@ -86,10 +89,9 @@
                             <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="3">  High   <br/>
                             <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="2">  Medium <br/>
                             <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="1">  Low    <br/>
+                            <br><br>
                             <input ng-disabled="wheelState!='reset'" type="submit" value="Spin" >
                         </form>
-                        <br><br>
-                        <input type="button" value="Reset" ng-click="resetWheel()" />
                         <br><br>
                         <p>Results:</p>
                         <p ng-repeat="result in results track by $index"> {{result}} </p>

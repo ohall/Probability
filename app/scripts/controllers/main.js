@@ -340,15 +340,29 @@ app.controller("CoinCtrl", function ($scope,$interval) {
         headcnt = 0,
         tailcnt = 0,
         pict = [3, 4, 1, 4],
-        cachedimages = ["heads","tailsma1","tailsma","heads1","dist"];
+        cachedimages = ["heads","tailsma1","tailsma","heads1","dist"],
+        odds = 0.5;
 
     $scope.tailsCount = 0;
     $scope.headsCount = 0;
 
+    $scope.tailsWeight = 50;
+    $scope.headsWeight = 50;
+
+    $scope.$watch('tailsWeight', function (value) {
+        $scope.headsWeight = 100-$scope.tailsWeight;
+        odds = $scope.headsWeight/100;
+    });
+
+    $scope.$watch('headsWeight', function (value) {
+        $scope.tailsWeight = 100-$scope.headsWeight;
+        odds = $scope.headsWeight/100;
+    });
+
     $scope.posclicked = function() {
         janimate(true);
         if (flipping === null) {
-            if (Math.random() < 0.5) {
+            if (Math.random() > odds) {
                 choice = 0;
                 headcnt++;
             }else {
@@ -389,14 +403,12 @@ app.controller("CoinCtrl", function ($scope,$interval) {
 
 });
 
-app.controller("SpinCtrl", function ($scope) {
+app.controller("SpinCtrl", function ($scope,$timeout) {
 
     var canvasId         = "myDrawingCanvas",
         wheelImageName   = "styles/prizewheel.png",
-        theSpeed         = 3,
+        theSpeed         = 1,
         pointerAngle     = 0,
-        doPrizeDetection = true,
-        spinMode         = "random",
         prizes = [
         {"name" : "1", "startAngle" : 0,   "endAngle" : 44},
         {"name" : "2", "startAngle" : 45,  "endAngle" : 89},
@@ -418,7 +430,7 @@ app.controller("SpinCtrl", function ($scope) {
 
     $scope.results = [];
 
-    $scope.power = 0;
+    $scope.power = 1;
     $scope.begin = function(){
         surface = document.getElementById(canvasId);
         if (surface.getContext){
@@ -443,9 +455,7 @@ app.controller("SpinCtrl", function ($scope) {
         surfaceContext.restore();
         currentAngle += angle;
         if (currentAngle < targetAngle){
-
             var angleRemaining = (targetAngle - currentAngle);
-
             if (angleRemaining > 6480){
                 angle = 55;
             }else if (angleRemaining > 5000){
@@ -467,38 +477,30 @@ app.controller("SpinCtrl", function ($scope) {
             }else{
                 angle = 1;
             }
-            spinTimer = setTimeout(doSpin, theSpeed);
+            spinTimer = $timeout(doSpin, theSpeed);
         }else{
-            $scope.wheelState = 'stopped';
-            if ((doPrizeDetection) && (prizes)){
-                var times360 = Math.floor(currentAngle / 360);
-                var rawAngle = (currentAngle - (360 * times360));
-                var relativeAngle =  Math.floor(pointerAngle - rawAngle);
+            $scope.wheelState = 'reset';
+            var times360 = Math.floor(currentAngle / 360),
+                rawAngle = (currentAngle - (360 * times360)),
+                relativeAngle =  Math.floor(pointerAngle - rawAngle);
 
-                if (relativeAngle < 0){
-                    relativeAngle = 360 - Math.abs(relativeAngle);
-                }
-                for (var x = 0; x < (prizes.length); x ++){
-                    if ((relativeAngle >= prizes[x]['startAngle']) && (relativeAngle <= prizes[x]['endAngle'])){
-                        $scope.results.push( prizes[x]['name'] );
-                        $scope.$apply();
-                        break;
-                    }
+            if (relativeAngle < 0){
+                relativeAngle = 360 - Math.abs(relativeAngle);
+            }
+            for (var x = 0; x < (prizes.length); x ++){
+                if ((relativeAngle >= prizes[x]['startAngle']) && (relativeAngle <= prizes[x]['endAngle'])){
+                    $scope.results.push( prizes[x]['name'] );
+                    $scope.$apply();
+                    break;
                 }
             }
         }
     };
 
 
-    $scope.startSpin = function(determinedValue){
-        var stopAngle = undefined;
-        if (spinMode == "random"){
-            stopAngle = Math.floor(Math.random() * 360);
-        }else if (spinMode == "determinedAngle"){
-            stopAngle = determinedValue;
-        }else if (spinMode == "determinedPrize"){
-            stopAngle = Math.floor(prizes[determinedValue]['startAngle'] + (Math.random() * (prizes[determinedValue]['endAngle'] - prizes[determinedValue]['startAngle'])));
-        }
+    $scope.startSpin = function(){
+        var stopAngle = Math.floor(Math.random() * 360);
+        resetWheel();
 
         if ((typeof(stopAngle) !== 'undefined') && ($scope.wheelState == 'reset') && ($scope.power)){
             stopAngle = (360 + pointerAngle) - stopAngle;
@@ -513,12 +515,11 @@ app.controller("SpinCtrl", function ($scope) {
         return d * 0.0174532925199432957;
     }
 
-    $scope.resetWheel = function(){
+    var resetWheel = function(){
         clearTimeout(spinTimer);
         angle 		 = 0;
         targetAngle  = 0;
         currentAngle = 0;
-        $scope.power = 0;
         $scope.wheelState = 'reset';
         initialDraw();
     }
