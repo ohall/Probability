@@ -200,7 +200,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         ctx = canvas.getContext("2d");
 
     var W = 350,
-        H = 450;
+        H = 350;
 
     canvas.height = H; canvas.width = W;
 
@@ -393,7 +393,7 @@ app.controller("SpinCtrl", function ($scope) {
 
     var canvasId         = "myDrawingCanvas",
         wheelImageName   = "styles/prizewheel.png",
-        theSpeed         = 20,
+        theSpeed         = 3,
         pointerAngle     = 0,
         doPrizeDetection = true,
         spinMode         = "random",

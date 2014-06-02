@@ -1,3 +1,21 @@
+@media screen {
+    div#preloader {
+        position: absolute;
+        left: -9999px;
+        top:  -9999px;
+    }
+    div#preloader img {
+        display: block;
+    }
+}
+@media print {
+    div#preloader,
+    div#preloader img {
+        visibility: hidden;
+        display: none;
+    }
+}
+
 /*****************************************************************/
 /*                       WHEEL                                   */
 /*****************************************************************/
@@ -5,6 +23,7 @@
 /* Sets the background image for the wheel */
 .the_wheel{
     float: right;
+    width: 500px;
     height: 600px;
     background-image: url(wheel_back.png);
     background-position: top center;
@@ -34,8 +53,8 @@
 }
 
 .flip-container, .front, .back {
-    width: 600px;
-    height: 800px;
+    width: 300px;
+    height: 500px;
 }
 
 /* flip speed goes here */
