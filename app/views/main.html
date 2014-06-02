@@ -30,6 +30,8 @@
                     </div>
                 </div>
                 <div class="rightCol">
+                    <p>Results:</p>
+                    <hr>
                     <p>Heads: {{headsCount}}</p>
                     <p>Tails: {{tailsCount}}</p>
                 </div>
@@ -45,9 +47,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="rightCol" style="width: 200px;float: right">
+                <div class="rightCol" style="width: 250px;float: right">
                     <p>Cards Drawn:</p>
-                    <p ng-repeat="card in results track by $index"> {{card}} </p>
+                    <p ng-repeat="card in results track by $index">
+                        <img ng-src="{{card.img}}" style="width: 28px;height: 41px">
+                        {{card.name}}
+                    </p>
                 </div>
             </div>
         </tab>
@@ -61,16 +66,16 @@
                         <p><label>Yellow: </label><input ng-model="yellow" type="number" min="0" max="10"></p>
                         <p><label>Orange: </label><input ng-model="orange" type="number" min="0" max="10"></p>
                         <p><label>Purple: </label><input ng-model="purple" type="number" min="0" max="10"></p>
-                        <input type="submit" value="Run">
+                        <input type="submit" value="{{ running ? 'Choose':'Run' }}">
                    </form>
 
                </div>
 
-                <div class="rightCol" style="float: right;width: 450px">
+                <div class="rightCol" style="float: right;width: 550px">
                     <canvas id="marblecanvas" class="throwingCanvas"></canvas>
                     <div style="width: 100px">
-                        <label>Bin</label>
-                        <span ng-repeat="ball in binnedBalls track by $index">
+                        <label>Bin   <a ng-click="clearBalls()">clear</a></label>
+                        <span ng-repeat="ball in binnedBalls track by $index" >
                             <div class="circle" style="{{ball}}"/>
                         </span>
                     </div>

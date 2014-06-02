@@ -175,7 +175,10 @@ app.controller('CardCtrl', function ($scope){
         if(!flipped){
             var card = Math.floor(Math.random()*NUM_CARDS)+1;
             $scope.card ="styles/cards/" + card + ".png";
-            $scope.results.push( getCardString(card) );
+            var resItem = {};
+            resItem.name = getCardString(card);
+            resItem.img = $scope.card;
+            $scope.results.push( resItem );
             $('.flipper').addClass('flipit');
             flipped = true;
         }else{
@@ -208,7 +211,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         gravity = 0.2,
         bounceFactor = 0.8,
         running = false,
-        updates,timer,numballs=0;
+        updates,timer,numballs= 0;
 
     $scope.red = 1;
     $scope.green = 1;
@@ -276,7 +279,15 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
                 $scope.purple;
     };
 
+
+    $scope.clearBalls = function(){
+        $scope.binnedBalls = [];
+    };
+
     $scope.marbles = function(){
+        if($scope.running){
+            done()
+        }
         setBalls();
         if(timer){
             $timeout.cancel(timer);
@@ -309,14 +320,14 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         }
 
         function stop(){
-            running = false;
+            $scope.running = false;
             $interval.cancel(updates);
             updates = undefined;
 
         }
 
-        if(!running){
-            running = true;
+        if(!$scope.running){
+            $scope.running = true;
             updates = $interval(update, 1000/60);
         }else{
             stop();
