@@ -1,11 +1,11 @@
 <div>
-    <h1>Probability Simulator</h1>
-    <h2>Data Generators</h2>
+    <h2>Probability Prototype</h2>
+    <!--<h2>Data Generators</h2>-->
     <tabset>
         <tab heading="Dice">
             <div class="col" ng-controller="DiceCtrl">
                 <div class="leftCol">
-                    <button ng-click="dice()">Roll Dice</button>
+                    <button ng-click="dice()" style="margin-bottom:10px">Roll Dice</button>
                     <canvas id="dicecanvas" class="throwingCanvas"></canvas>
                 </div>
                 <div class="rightCol">
@@ -58,7 +58,7 @@
         </tab>
         <tab heading="Marbles">
             <div class="col" ng-controller="MarbleCtrl">
-               <div class="leftCol" style="width: 200px;">
+               <div class="leftCol" style="width: 150px;">
                    <form ng-submit="marbles()">
                         <p><label>Red:</label><input ng-model="red" type="number" min="0" max="10"></p>
                         <p><label>Green:  </label><input ng-model="green" type="number" min="0" max="10"></p>
@@ -71,8 +71,8 @@
 
                </div>
 
-                <div class="rightCol" style="float: right;width: 550px">
-                    <canvas id="marblecanvas" class="throwingCanvas"></canvas>
+                <div class="rightCol" style="float: left;width: 550px">
+                    <canvas id="marblecanvas" class="throwingCanvas" style="float: right"></canvas>
                     <div style="width: 100px">
                         <label>Bin   <a ng-click="clearBalls()">clear</a></label>
                         <span ng-repeat="ball in binnedBalls track by $index" >

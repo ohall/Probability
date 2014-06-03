@@ -118,6 +118,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     }
 
     $scope.dice = function(){
+        stop();
         setDice(drawFunc);
         if(timer){
             $timeout.cancel(timer);
@@ -152,7 +153,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             numupdates = 0;
             updates = $interval(update, 1000/60);
         }else{
-            stop()
+            stop();
             clearCanvas();
         }
 
