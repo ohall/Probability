@@ -43,26 +43,87 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         W = 350,
         H = 350,
         dice, i,
-        NUM_DICE = 4,
         gravity = 0.2,
         bounceFactor = 0.5,
-        running = false,
         updates,timer,numupdates=0,
         stopRoll = false;
 
     canvas.height = H; canvas.width = W;
+
+    $scope.running = false;
     $scope.diceResults = [];
+    $scope.numDice = 1;
+    $scope.diceChanged = true;
 
-    setup();
+    $scope.dice = function(){
+        stop();
+        setup();
+        setDice(drawFunc);
 
-    function setup(){
-        for(var i = 0;i<NUM_DICE;i++){
+        $scope.diceChanged = false;
+
+        if(timer){
+            $timeout.cancel(timer);
+            timer = undefined;
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, W, H);
+        }
+
+        function stop(){
+            $scope.running = false;
+            $interval.cancel(updates);
+            updates = undefined;
+        }
+
+        function update() {
+            numupdates++;
+            clearCanvas();
+            for(var i =0;i<dice.length;i++){
+                dice[i].draw();
+                dice[i].y += dice[i].vy;
+                dice[i].vy += gravity;
+                if(dice[i].y + dice[i].height > H) {
+                    dice[i].y = H - dice[i].height;
+                    dice[i].vy *= -bounceFactor;
+                }
+            }
+        }
+
+        if(!$scope.running){
+            $scope.running = true;
+            numupdates = 0;
+            updates = $interval(update, 1000/60);
+        }else{
+            stop();
+            clearCanvas();
+        }
+
+        $timeout(function(){
+            stopRoll = true;
+        },2500);
+
+        timer = $timeout(stop,3000);
+    };
+
+    $scope.numDiceChanged = function(){
+        $scope.diceChanged = true;
+        $scope.diceResults = [];
+    };
+
+    var setup = function(){
+        for(var i = 0;i<$scope.numDice;i++){
             var d = {};
             d.num = i+1;
             d.rolls = [];
-            $scope.diceResults.push(d);
+            if($scope.diceChanged){
+                $scope.diceResults[i] = d;
+            }else if(!$scope.diceResults[i]){
+                $scope.diceResults.push(d)
+            }
         }
-    }
+    };
 
     var drawFunc = function() {
         var image = new Image;
@@ -84,6 +145,27 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
     };
 
+    var setDice = function(pdrawFunc){
+        stopRoll = false;
+        dice = [];
+        for(i=0;i<$scope.numDice;i++){
+            var die = {
+                x: (W/10)*i + 15,
+                y: Math.floor(Math.random()*$scope.numDice),
+                height:32,
+                stopped:false,
+                rolls:$scope.diceResults[i].rolls,
+                index:i,
+                direction:i,
+                image:null,
+                vx: 0,
+                vy: Math.floor(Math.random()*$scope.numDice),
+                draw: pdrawFunc
+            };
+            dice.push(die);
+        }
+    };
+
     var getDieAnimationImage =  function(directionInt,index){
         if(numupdates%6===0){
             if(angular.isNumber(directionInt) && (directionInt % 2 == 0)){
@@ -96,73 +178,6 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
     };
 
-    function setDice(pdrawFunc){
-        stopRoll = false;
-        dice = [];
-        for(i=0;i<NUM_DICE;i++){
-            var die = {
-                x: (W/10)*i + 15,
-                y: Math.floor(Math.random()*NUM_DICE),
-                height:32,
-                stopped:false,
-                rolls:$scope.diceResults[i].rolls,
-                index:i,
-                direction:i,
-                image:null,
-                vx: 0,
-                vy: Math.floor(Math.random()*NUM_DICE),
-                draw: pdrawFunc
-            };
-            dice.push(die);
-        }
-    }
-
-    $scope.dice = function(){
-        stop();
-        setDice(drawFunc);
-        if(timer){
-            $timeout.cancel(timer);
-            timer = undefined;
-        }
-        function clearCanvas() {
-            ctx.clearRect(0, 0, W, H);
-        }
-
-        function stop(){
-            running = false;
-            $interval.cancel(updates);
-            updates = undefined;
-        }
-
-        function update() {
-            numupdates++;
-            clearCanvas();
-            for(var i =0;i<dice.length;i++){
-                dice[i].draw();
-                dice[i].y += dice[i].vy;
-                dice[i].vy += gravity;
-                if(dice[i].y + dice[i].height > H) {
-                    dice[i].y = H - dice[i].height;
-                    dice[i].vy *= -bounceFactor;
-                }
-            }
-        }
-
-        if(!running){
-            running = true;
-            numupdates = 0;
-            updates = $interval(update, 1000/60);
-        }else{
-            stop();
-            clearCanvas();
-        }
-
-        $timeout(function(){
-            stopRoll = true;
-        },2500);
-
-        timer = $timeout(stop,3000);
-    };
 });
 
 app.controller('CardCtrl', function ($scope){

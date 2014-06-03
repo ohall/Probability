@@ -5,7 +5,9 @@
         <tab heading="Dice">
             <div class="col" ng-controller="DiceCtrl">
                 <div class="leftCol">
-                    <button ng-click="dice()" style="margin-bottom:10px">Roll Dice</button>
+                    <p><label>Dice:</label><input min="0" max="10" ng-disabled="{{running}}"
+                                                  type="number" ng-model="numDice" ng-change="numDiceChanged()" /></p>
+                    <button ng-click="dice()" style="margin-bottom:10px">Roll</button>
                     <canvas id="dicecanvas" class="throwingCanvas"></canvas>
                 </div>
                 <div class="rightCol">
