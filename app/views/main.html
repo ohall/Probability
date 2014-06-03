@@ -62,12 +62,18 @@
             <div class="col" ng-controller="MarbleCtrl">
                <div class="leftCol" style="width: 150px;">
                    <form ng-submit="marbles()">
-                        <p><label>Red:</label><input ng-model="red" type="number" min="0" max="10"></p>
-                        <p><label>Green:  </label><input ng-model="green" type="number" min="0" max="10"></p>
-                        <p><label>Blue:   </label><input ng-model="blue" type="number" min="0" max="10"></p>
-                        <p><label>Yellow: </label><input ng-model="yellow" type="number" min="0" max="10"></p>
-                        <p><label>Orange: </label><input ng-model="orange" type="number" min="0" max="10"></p>
-                        <p><label>Purple: </label><input ng-model="purple" type="number" min="0" max="10"></p>
+                        <p><label>Red:</label><input ng-model="red" ng-change="init()"
+                                                     type="number" min="0" max="10"></p>
+                        <p><label>Green:  </label><input ng-model="green" ng-change="init()"
+                                                         type="number" min="0" max="10"></p>
+                        <p><label>Blue:   </label><input ng-model="blue" ng-change="init()"
+                                                         type="number" min="0" max="10"></p>
+                        <p><label>Yellow: </label><input ng-model="yellow" ng-change="init()"
+                                                         type="number" min="0" max="10"></p>
+                        <p><label>Orange: </label><input ng-model="orange"  ng-change="init()"
+                                                         type="number" min="0" max="10"></p>
+                        <p><label>Purple: </label><input ng-model="purple" ng-change="init()"
+                                                         type="number" min="0" max="10"></p>
                         <input type="submit" value="{{ running ? 'Choose':'Run' }}">
                    </form>
 

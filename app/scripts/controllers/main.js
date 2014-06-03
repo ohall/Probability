@@ -238,7 +238,6 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
 
     $scope.binnedBalls = [];
 
-
     var drawFunc = function() {
         // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
         ctx.beginPath();
@@ -249,34 +248,62 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     };
 
     function setBalls(){
-        var i;
+        var i,
+        colors = [];
         balls = [];
         numballs = 0;
         for(i=0;i<$scope.red;i++){
-            balls.push(createBall("red"));
+            colors.push("red");
         }
         for(i=0;i<$scope.green;i++){
-            balls.push(createBall("green"));
+            colors.push("green");
         }
         for(i=0;i<$scope.blue;i++){
-            balls.push(createBall("blue"));
+            colors.push("blue");
         }
         for(i=0;i<$scope.yellow;i++){
-            balls.push(createBall("yellow"));
+            colors.push("yellow");
         }
         for(i=0;i<$scope.orange;i++){
-            balls.push(createBall("orange"));
+            colors.push("orange");
         }
         for(i=0;i<$scope.purple;i++){
-            balls.push(createBall("purple"));
+            colors.push("purple");
+        }
+
+        for(i=0;i<totalBalls();i++){
+            balls.push( createBall(colors[i]));
         }
     }
+
+    var ballsPerRow = function(ballwidth,canvasWidth,padding){
+        return Math.floor( ( canvasWidth- ( 2 * padding ) )/ballwidth );
+    };
+
+    var ballInitPos = function(numballs,width){
+        var padding=30,
+            row = 1,
+            loc = {};
+
+        var ballsInRow = ballsPerRow(30,width,padding);
+
+        for(var i = 0;i<numballs;i++){
+            if( i >= ballsInRow * row ){
+                row++;
+            }
+        }
+        loc.x = padding + ( numballs-( ballsInRow * (row-1)  ) ) * 30;
+        loc.y = padding + 30 * row;
+        return loc;
+    };
+
+
 
     var createBall = function(color){
         numballs++;
         return {
-            x: (W/totalBalls())*numballs-20,
-            y: Math.floor(Math.random()*10),
+            x: ballInitPos(numballs,W).x,
+            y: ballInitPos(numballs,W).y,
             radius: 15,
             color: color,
             // Velocity components
@@ -295,10 +322,13 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
                 $scope.purple;
     };
 
-
     $scope.clearBalls = function(){
         $scope.binnedBalls = [];
     };
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, W, H);
+    }
 
     $scope.marbles = function(){
         if($scope.running){
@@ -309,12 +339,9 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
             $timeout.cancel(timer);
             timer = undefined;
         }
-        function clearCanvas() {
-            ctx.clearRect(0, 0, W, H);
-        }
+
         // A function that will update the position of the ball is also needed. Lets create one
         function update() {
-
             clearCanvas();
             for(var i =0;i<balls.length;i++){
                 balls[i].draw();
@@ -353,8 +380,16 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     };
 
 
+    $scope.init = function(){
+        $scope.clearBalls();
+        clearCanvas();
+        setBalls();
+        for(var i =0;i<balls.length;i++) {
+            balls[i].draw();
+        }
+    };
 
-
+    $scope.init();
 });
 
 app.controller("CoinCtrl", function ($scope,$interval) {
