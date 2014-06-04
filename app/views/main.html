@@ -74,8 +74,10 @@
                                                          type="number" min="0" max="10"></p>
                         <p><label>Purple: </label><input ng-model="purple" ng-change="init()"
                                                          type="number" min="0" max="10"></p>
-                        <input type="submit" value="{{ running ? 'Choose':'Run' }}">
+                        <input type="submit"  value="Run">
                    </form>
+                        <input type="submit" ng-if="running" value="Choose" ng-click="choose()">
+                        <input type="submit" ng-if="running" value="Stop" ng-click="stop()">
 
                </div>
 
@@ -84,7 +86,7 @@
                     <div style="width: 100px">
                         <label>Bin   <a ng-click="clearBalls()">clear</a></label>
                         <span ng-repeat="ball in binnedBalls track by $index" >
-                            <div class="circle" style="{{ball}}"/>
+                            <div class="circle" style="{{ball.color+';'+ball.grad}}"/>
                         </span>
                     </div>
                 </div>
