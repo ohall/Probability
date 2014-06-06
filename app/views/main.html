@@ -59,7 +59,7 @@
             </div>
         </tab>
         <tab heading="Marbles">
-            <div class="col" ng-controller="MarbleCtrl">
+            <div class="col" ng-controller="MarbleCtrl" ng-init="init()">
                <div class="leftCol" style="width: 150px;">
                    <form ng-submit="marbles()">
                         <p><label>Red:</label><input ng-model="red" ng-change="init()"

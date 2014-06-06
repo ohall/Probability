@@ -216,28 +216,98 @@ app.controller('CardCtrl', function ($scope){
 
 app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     var canvas = document.getElementById("marblecanvas"),
-        ctx = canvas.getContext("2d");
-
-    var W = 350,
+        ctx = canvas.getContext("2d"),
+        W = 350,
         H = 350,
-        BALLRADIUS = 15;
-
-    canvas.height = H; canvas.width = W;
-
-    var balls,
-        bounceFactor = 0.1,
+        BALLRADIUS = 15,
+        balls,bounceFactor = 0.1,
         updates,timer,numballs= 0;
 
+    canvas.height = H;
+    canvas.width = W;
+
     $scope.running = false;
-    $scope.red = 1;
-    $scope.green = 1;
-    $scope.blue = 1;
-    $scope.yellow = 1;
-    $scope.orange = 1;
-    $scope.purple = 1;
+
+    $scope.red      = 1;
+    $scope.green    = 1;
+    $scope.blue     = 1;
+    $scope.yellow   = 1;
+    $scope.orange   = 1;
+    $scope.purple   = 1;
 
     $scope.binnedBalls = [];
 
+    $scope.choose = function(){
+        var ballIndex = Math.floor(Math.random() * balls.length),
+            selectedBall = balls[ ballIndex ],
+            ballStyles = {};
+        ballStyles.color = 'background-color:'+selectedBall.color;
+        ballStyles.grad = 'background-image:-webkit-radial-gradient(55% 55%, circle farthest-side,#FFF,'+selectedBall.color+' 100%)';
+        $scope.binnedBalls.push(ballStyles);
+        selectedBall.radius = 0;
+        update();
+        balls.splice(ballIndex, 1);
+    };
+
+    $scope.marbles = function(){
+        var done = function(){
+            $scope.stop();
+            $scope.choose();
+        };
+
+        if($scope.running){
+            done()
+        }
+
+        setBalls();
+
+        if(timer){
+            $timeout.cancel(timer);
+            timer = undefined;
+        }
+
+        if(!$scope.running){
+            $scope.running = true;
+            updates = $interval(update, 1000/60);
+        }else{
+            $scope.stop();
+        }
+//        timer = $timeout(done,1500);
+    };
+
+    $scope.init = function(){
+        $scope.clearBalls();
+        reset();
+    };
+
+    $scope.stop = function(){
+        $scope.running = false;
+        $interval.cancel(updates);
+        updates = undefined;
+        reset();
+    };
+
+    $scope.clearBalls = function(){
+        $scope.binnedBalls = [];
+    };
+
+    var update = function() {
+        clearCanvas();
+        for(var i =0;i<balls.length;i++){
+            balls[i].draw();
+            if( balls[i].x<0 || balls[i].x>W){
+                balls[i].vx *= -bounceFactor;
+                balls[i].dx=-balls[i].dx;
+            }
+
+            if( balls[i].y<0 || balls[i].y>H){
+                balls[i].vy *= -bounceFactor;
+                balls[i].dy=-balls[i].dy;
+            }
+            balls[i].x+=balls[i].dx;
+            balls[i].y+=balls[i].dy;
+        }
+    };
     var drawFunc = function() {
         // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
         ctx.beginPath();
@@ -251,8 +321,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         ctx.fill();
         ctx.closePath();
     };
-
-    function setBalls(){
+    var setBalls = function(){
         var i,
         colors = [];
         balls = [];
@@ -280,11 +349,9 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
             balls.push( createBall(colors[i]));
         }
     }
-
     var ballsPerRow = function(ballwidth,canvasWidth,padding){
         return Math.floor( ( canvasWidth- ( 2 * padding ) )/ballwidth );
     };
-
     var ballInitPos = function(numballs,width){
         var padding=30,
             row = 1,
@@ -301,7 +368,6 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         loc.y = padding + 30 * row;
         return loc;
     };
-
     var createBall = function(color){
         numballs++;
         return {
@@ -316,7 +382,6 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
             draw: drawFunc
         };
     };
-
     var totalBalls = function(){
         return  $scope.red +
                 $scope.green +
@@ -325,111 +390,16 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
                 $scope.orange +
                 $scope.purple;
     };
-
-    $scope.clearBalls = function(){
-        $scope.binnedBalls = [];
-    };
-
-    function clearCanvas() {
+    var clearCanvas = function() {
         ctx.clearRect(0, 0, W, H);
     }
-
-    $scope.marbles = function(){
-        if($scope.running){
-            done()
-        }
-        setBalls();
-        if(timer){
-            $timeout.cancel(timer);
-            timer = undefined;
-        }
-
-        function update() {
-            clearCanvas();
-//            collide();
-            for(var i =0;i<balls.length;i++){
-                balls[i].draw();
-                if( balls[i].x<0 || balls[i].x>W){
-                    balls[i].vx *= -bounceFactor;
-                    balls[i].dx=-balls[i].dx;
-                }
-
-                if( balls[i].y<0 || balls[i].y>H){
-                    balls[i].vy *= -bounceFactor;
-                    balls[i].dy=-balls[i].dy;
-                }
-
-                balls[i].x+=balls[i].dx;
-                balls[i].y+=balls[i].dy;
-
-
-
-            }
-        }
-
-        function collide() {
-            for (var i = 0; i < balls.length; i += 1) {
-                for (var j = i + 1; j < balls.length; j += 1) {
-                    hitTestCircle(balls[i],balls[j])
-                }
-            }
-        }
-
-        function hitTestCircle(ball1, ball2) {
-            if ( Math.abs( ball1.x + BALLRADIUS - ball2.x + BALLRADIUS ) <= 1 ){
-                ball1.dx*=-1
-                ball2.dx*=-1;
-            }else if ( Math.abs( ball1.y + BALLRADIUS - ball2.y + BALLRADIUS ) <= 1 ){
-                ball1.dy*=-1
-                ball2.dy*=-1;
-            }
-        }
-
-        $scope.choose = function(){
-            var ballIndex = Math.floor(Math.random() * balls.length);
-            var selectedBall = balls[ ballIndex ];
-            var ballStyles = {};
-            ballStyles.color = 'background-color:'+selectedBall.color;
-            ballStyles.grad = 'background-image:-webkit-radial-gradient(55% 55%, circle farthest-side,#FFF,'+selectedBall.color+' 100%)';
-            $scope.binnedBalls.push(ballStyles);
-            selectedBall.radius = 0;
-            update();
-            balls.splice(ballIndex, 1);
-        };
-
-        function done(){
-            $scope.stop();
-            $scope.choose();
-        }
-
-        $scope.stop = function(){
-            $scope.running = false;
-            $interval.cancel(updates);
-            updates = undefined;
-
-        }
-
-        if(!$scope.running){
-            $scope.running = true;
-            updates = $interval(update, 1000/60);
-        }else{
-            $scope.stop();
-            clearCanvas();
-        }
-//        timer = $timeout(done,1500);
-    };
-
-
-    $scope.init = function(){
-        $scope.clearBalls();
+    var reset = function(){
         clearCanvas();
         setBalls();
         for(var i =0;i<balls.length;i++) {
             balls[i].draw();
         }
     };
-
-    $scope.init();
 });
 
 app.controller("CoinCtrl", function ($scope,$interval) {
