@@ -60,7 +60,8 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         updates,timer,numupdates=0,
         stopRoll = false;
 
-    canvas.height = H; canvas.width = W;
+    canvas.height = H;
+    canvas.width = W;
 
     $scope.running = false;
     $scope.diceResults = [];
