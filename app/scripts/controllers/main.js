@@ -330,6 +330,8 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     };
 
     $scope.runMarbleAni = function(){
+
+        $( "#marblejar" ).effect( "shake" );
         var done = function(){
             $scope.stop();
             $scope.choose();
