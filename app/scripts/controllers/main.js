@@ -5,38 +5,50 @@ var app = angular.module('ProbabilityApp');
 
 app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     var rollingImgs = [
-        "styles/die-1.gif",
-        "styles/dices-1.gif",
-        "styles/die-2.gif",
-        "styles/dices-2.gif",
-        "styles/die-3.gif",
-        "styles/dices-3.gif",
-        "styles/die-4.gif",
-        "styles/dices-4.gif",
-        "styles/die-5.gif",
-        "styles/dices-5.gif",
-        "styles/die-6.gif",
-        "styles/dices-6.gif",
-        "styles/die-1.gif",
-        "styles/dicet-1.gif",
-        "styles/die-2.gif",
-        "styles/dicet-2.gif",
-        "styles/die-3.gif",
-        "styles/dicet-3.gif",
-        "styles/die-4.gif",
-        "styles/dicet-4.gif",
-        "styles/die-5.gif",
-        "styles/dicet-5.gif",
-        "styles/die-6.gif",
-        "styles/dicet-6.gif"
+        [
+            "styles/die-1.gif",
+            "styles/dices-1.gif",
+            "styles/die-1.gif",
+            "styles/dicet-1.gif"
+        ],
+        [
+            "styles/die-2.gif",
+            "styles/dices-2.gif",
+            "styles/die-2.gif",
+            "styles/dicet-2.gif",
+        ],
+        [
+            "styles/die-3.gif",
+            "styles/dices-3.gif",
+            "styles/die-3.gif",
+            "styles/dicet-3.gif"
+        ],
+        [
+            "styles/die-4.gif",
+            "styles/dices-4.gif",
+            "styles/die-4.gif",
+            "styles/dicet-4.gif"
+        ],
+        [
+            "styles/die-5.gif",
+            "styles/dices-5.gif",
+            "styles/die-5.gif",
+            "styles/dicet-5.gif"
+        ],
+        [
+            "styles/die-6.gif",
+            "styles/dices-6.gif",
+            "styles/die-6.gif",
+            "styles/dicet-6.gif"
+        ]
     ],
         faces = [
-        "styles/die-1.gif",
-        "styles/die-2.gif",
-        "styles/die-3.gif",
-        "styles/die-4.gif",
-        "styles/die-5.gif",
-        "styles/die-6.gif"
+            { id:1, img:"styles/die-1.gif" },
+            { id:2, img:"styles/die-2.gif" },
+            { id:3, img:"styles/die-3.gif" },
+            { id:4, img:"styles/die-4.gif" },
+            { id:5, img:"styles/die-5.gif" },
+            { id:6, img:"styles/die-6.gif" }
         ],
         canvas =  document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d"),
@@ -54,6 +66,10 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     $scope.diceResults = [];
     $scope.numDice = 1;
     $scope.diceChanged = true;
+
+    $scope.diceValues = [
+        {id:1, faces:[ 1, 2, 3, 4, 5, 6 ]}
+    ];
 
     $scope.dice = function(){
         stop();
@@ -110,6 +126,11 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     $scope.numDiceChanged = function(){
         $scope.diceChanged = true;
         $scope.diceResults = [];
+        var index = $scope.diceValues.length;
+        while( $scope.numDice > $scope.diceValues.length ){
+            index++;
+            $scope.diceValues.push({id:1, faces:[ 1, 2, 3, 4, 5, 6 ]});
+        }
     };
 
     var setup = function(){
@@ -129,14 +150,19 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         var image = new Image;
 
         if(!stopRoll){//we're looping through die faces
-            this.index = getDieAnimationImage(this.direction,this.index);
-            image.src = rollingImgs[this.index];
+            var faceImages = [];
+            this.faces.forEach(function(face){
+                  faceImages = $.merge(faceImages,rollingImgs[face-1]);
+            });
+            this.index = getDieAnimationImage(this.direction,this.index,faceImages);
+            image.src = faceImages[this.index];
             ctx.drawImage(image, this.x, this.y);
         }else{
             if(!this.stopped) {//we're choosing a face to land on
-                var resultIndex = Math.floor(Math.random() * faces.length);
-                image.src = faces[resultIndex];
-                this.rolls.push(resultIndex+1);
+                var resultIndex = Math.floor(Math.random() * this.faces.length);
+                var resultObj = faces[ this.faces[resultIndex]-1 ];
+                image.src  = resultObj.img;
+                this.rolls.push( resultObj.id );
                 this.stopped = true;
                 this.image = image;
             }
@@ -148,7 +174,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     var setDice = function(pdrawFunc){
         stopRoll = false;
         dice = [];
-        for(i=0;i<$scope.numDice;i++){
+        for(i=0;i<$scope.diceValues.length;i++){
             var die = {
                 x: (W/10)*i + 15,
                 y: Math.floor(Math.random()*$scope.numDice),
@@ -156,6 +182,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
                 stopped:false,
                 rolls:$scope.diceResults[i].rolls,
                 index:i,
+                faces:getAvailableFaces( $scope.diceValues[i].faces ),
                 direction:i,
                 image:null,
                 vx: 0,
@@ -166,12 +193,23 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
     };
 
-    var getDieAnimationImage =  function(directionInt,index){
+    var getAvailableFaces = function(allfaces){
+        var facesToReturn = [];
+        allfaces.forEach(function(face){
+            if(facesToReturn.indexOf(face) === -1){
+                facesToReturn.push(face)
+            }
+
+        });
+        return facesToReturn;
+    };
+
+    var getDieAnimationImage =  function(directionInt,index,faces){
         if(numupdates%6===0){
             if(angular.isNumber(directionInt) && (directionInt % 2 == 0)){
-                return ( index === 0 ) ? rollingImgs.length-1 : index-1;
+                return ( index === 0 ) ? faces.length-1 : index-1;
             }else{//spin other direction
-                return ( index === rollingImgs.length-1 ) ? 0 : index+1;
+                return ( index === faces.length-1 ) ? 0 : index+1;
             }
         }else{
             return index;

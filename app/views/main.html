@@ -5,12 +5,25 @@
         <tab heading="Dice">
             <div class="col" ng-controller="DiceCtrl">
                 <div class="leftCol">
-                    <p><label>Dice:</label><input min="0" max="10" ng-disabled="{{running}}"
-                                                  type="number" ng-model="numDice" ng-change="numDiceChanged()" /></p>
+                    <p><label>Dice:</label>
+                        <input min="0" max="10" ng-disabled="running"
+                               type="number" ng-model="numDice"
+                               ng-change="numDiceChanged()" /></p>
                     <button ng-click="dice()" style="margin-bottom:10px">Roll</button>
                     <canvas id="dicecanvas" class="throwingCanvas"></canvas>
                 </div>
                 <div class="rightCol">
+                    <p>Die Faces:</p>
+                    <div class="itemconfig" ng-repeat="die in diceValues">
+                        {{die.id}}
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[0]"/>
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[1]"/>
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[2]"/>
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[3]"/>
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[4]"/>
+                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[5]"/>
+                    </div>
+
                     <p>Results:</p>
                     <hr>
                     <p ng-repeat="result in diceResults">
@@ -98,13 +111,13 @@
                     <div id="wheel" style="float: right"></div>
                     <div>
                         <label>Number of slices</label>
-                        <input style="width: 80px" type="number" max="{{MAXNUMSLICES}}" min="0"
+                        <input class="smallinput" type="number" max="{{MAXNUMSLICES}}" min="0"
                                ng-model="numSlices" ng-change="slicesChanged()" ></input>
                         <form ng-submit="startSpin()" >
                             <input type="submit" value="Spin" >
-                            <div style="width: 300px" ng-repeat="slice in values">
-                                <input style="width: 80px" type="text"   ng-model="slice.name"  ng-change="change()"  />
-                                <input style="width: 80px" type="number" ng-model="slice.value" ng-change="change()" />
+                            <div class="itemconfig" ng-repeat="slice in values">
+                                <input class="smallinput" type="text"   ng-model="slice.name"  ng-change="change()"  />
+                                <input class="smallinput" type="number" ng-model="slice.value" ng-change="change()" />
                                 <input style="width: 20px" colorpicker   ng-model="slice.color" ng-change="change()"  />
                                 <a ng-click="removeItem($index)" style="cursor: pointer;margin-left: 10px" >X</a>
                             </div>
