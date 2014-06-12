@@ -73,35 +73,35 @@
         </tab>
         <tab heading="Marbles">
             <div class="col" ng-controller="MarbleCtrl" ng-init="init()">
-               <div class="leftCol" style="width: 150px;">
-                   <form ng-submit="marbles()">
-                        <p><label>Red:</label><input ng-model="red" ng-change="init()"
-                                                     type="number" min="0" max="10"></p>
-                        <p><label>Green:  </label><input ng-model="green" ng-change="init()"
-                                                         type="number" min="0" max="10"></p>
-                        <p><label>Blue:   </label><input ng-model="blue" ng-change="init()"
-                                                         type="number" min="0" max="10"></p>
-                        <p><label>Yellow: </label><input ng-model="yellow" ng-change="init()"
-                                                         type="number" min="0" max="10"></p>
-                        <p><label>Orange: </label><input ng-model="orange"  ng-change="init()"
-                                                         type="number" min="0" max="10"></p>
-                        <p><label>Purple: </label><input ng-model="purple" ng-change="init()"
-                                                         type="number" min="0" max="10"></p>
-                        <input type="submit"  value="Run">
-                   </form>
-                        <input type="submit" ng-if="running" value="Choose" ng-click="choose()">
-                        <input type="submit" ng-if="running" value="Stop" ng-click="stop()">
+               <div class="leftCol" style="width: 450px;">
+                    <label>Number of slices</label>
+                    <input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0"
+                          ng-model="ballTypeCount" ng-change="ballsChanged()" ></input>
+                    <form ng-submit="runMarbleAni()">
+                        <div class="itemconfig" ng-repeat="balltype in ballObjects">
+                            <input class="smallinput" type="text"   ng-model="balltype.name"  ng-change="init()"  />
+                            <input class="smallinput" type="number" ng-model="balltype.number" ng-change="init()" />
+                            <input class="colorpicker" colorpicker  ng-model="balltype.color" ng-change="init()"  />
+                            <a class="removeitem" ng-click="removeItem($index)" >X</a>
+                        </div>
+                        <input type="submit"    value="Run">
+                        <input type="button" ng-if="running"  value="Choose"  ng-click="choose()">
+                        <input type="button" ng-if="running"  value="Stop"    ng-click="stop()">
+                    </form>
 
                </div>
+                <div class="rightCol" style="width: 350px">
+                    <canvas id="marblecanvas" class="throwingCanvas"></canvas>
 
-                <div class="rightCol" style="float: left;width: 550px">
-                    <canvas id="marblecanvas" class="throwingCanvas" style="float: right"></canvas>
-                    <div style="width: 100px">
+                    <div class="binarea">
                         <label>Bin   <a ng-click="clearBalls()">clear</a></label>
-                        <span ng-repeat="ball in binnedBalls track by $index" >
-                            <div class="circle" style="{{ball.color+';'+ball.grad}}"/>
-                        </span>
+                        <div class="bindiv">
+                            <span class="ballholder" ng-repeat="ball in binnedBalls track by $index" >
+                                <div class="circle" style="{{ball.color+';'+ball.grad}}"/>
+                            </span>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </tab>
@@ -118,8 +118,8 @@
                             <div class="itemconfig" ng-repeat="slice in values">
                                 <input class="smallinput" type="text"   ng-model="slice.name"  ng-change="change()"  />
                                 <input class="smallinput" type="number" ng-model="slice.value" ng-change="change()" />
-                                <input style="width: 20px" colorpicker   ng-model="slice.color" ng-change="change()"  />
-                                <a ng-click="removeItem($index)" style="cursor: pointer;margin-left: 10px" >X</a>
+                                <input class="colorpicker" colorpicker  ng-model="slice.color" ng-change="change()"  />
+                                <a class="removeitem" ng-click="removeItem($index)" >X</a>
                             </div>
                         <br><br>
                         </form>

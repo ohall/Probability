@@ -28,6 +28,15 @@
     width: 300px;
 }
 
+.colorpicker{
+    width: 20px;
+}
+
+.removeitem{
+    cursor: pointer;
+    margin-left: 10px;
+}
+
 /*****************************************************************/
 /*                       WHEEL                                   */
 /*****************************************************************/
@@ -160,17 +169,34 @@
     border: 1px solid blue;
 }
 
-.circle{
-    width:30px;
-    height:30px;
-    border-radius:15px;
-    margin: 10px;
-}
+
 
 .circleFrame{
     width: 50px;
     display: inline-block;
 
+}
+
+.binarea{
+    width: 352px;
+    min-height: 100px;
+    display: inline-block;
+    border: 1px solid blue;
+}
+
+.bindiv{
+    width: 100%;
+}
+
+.ballholder{
+    float: left;
+}
+
+.circle{
+    width:30px;
+    height:30px;
+    border-radius:15px;
+    margin: 10px;
 }
 
 /**********************************/

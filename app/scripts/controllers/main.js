@@ -3,6 +3,20 @@
 
 var app = angular.module('ProbabilityApp');
 
+app.service('ProbabilityService', function(){
+
+    return{
+        getRandomColor:function() {
+            var letters = '0123456789ABCDEF'.split('');
+            var color = '#';
+            for (var i = 0; i < 6; i++ ) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+    }
+});
+
 app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     var rollingImgs = [
         [
@@ -253,26 +267,53 @@ app.controller('CardCtrl', function ($scope){
     };
 });
 
-app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
+app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityService){
     var canvas = document.getElementById("marblecanvas"),
         ctx = canvas.getContext("2d"),
         W = 350,
         H = 350,
         BALLRADIUS = 15,
         balls,bounceFactor = 0.1,
-        updates,timer,numballs= 0;
+        updates,timer,numBallsCreated;
 
     canvas.height = H;
     canvas.width = W;
 
     $scope.running = false;
 
-    $scope.red      = 1;
-    $scope.green    = 1;
-    $scope.blue     = 1;
-    $scope.yellow   = 1;
-    $scope.orange   = 1;
-    $scope.purple   = 1;
+    $scope.MAXDIFFBALLS = 10;
+
+    $scope.ballObjects = [
+        {name:'blue',   number:4,   color:'blue'   },
+        {name:'orange', number:1,   color:'orange' },
+        {name:'green',  number:1,   color:'green'  }
+    ];
+
+    $scope.ballTypeCount = $scope.ballObjects.length;
+
+    $scope.ballsChanged = function(){
+
+        if($scope.ballTypeCount>$scope.MAXDIFFBALLS){
+            $scope.ballTypeCount=$scope.MAXDIFFBALLS;
+            $scope.$apply();
+        }
+
+        while($scope.ballTypeCount > $scope.ballObjects.length){
+            var sliceobj = {"name" : $scope.ballObjects.length+1,   "color" : ProbabilityService.getRandomColor(),   "number" : 1};
+            $scope.ballObjects.push(sliceobj);
+        }
+
+        while($scope.ballTypeCount < $scope.ballObjects.length){
+            $scope.ballObjects.splice($scope.ballObjects.length-1, 1);
+        }
+        $scope.init();
+    };
+
+    $scope.removeItem = function(index){
+        $scope.values.splice(index, 1);
+        $scope.ballTypeCount--;
+        $scope.createArcs();
+    };
 
     $scope.binnedBalls = [];
 
@@ -288,7 +329,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         balls.splice(ballIndex, 1);
     };
 
-    $scope.marbles = function(){
+    $scope.runMarbleAni = function(){
         var done = function(){
             $scope.stop();
             $scope.choose();
@@ -364,25 +405,15 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         var i,
         colors = [];
         balls = [];
-        numballs = 0;
-        for(i=0;i<$scope.red;i++){
-            colors.push("red");
-        }
-        for(i=0;i<$scope.green;i++){
-            colors.push("green");
-        }
-        for(i=0;i<$scope.blue;i++){
-            colors.push("blue");
-        }
-        for(i=0;i<$scope.yellow;i++){
-            colors.push("yellow");
-        }
-        for(i=0;i<$scope.orange;i++){
-            colors.push("orange");
-        }
-        for(i=0;i<$scope.purple;i++){
-            colors.push("purple");
-        }
+        numBallsCreated = 0;
+
+        $scope.ballObjects.forEach(
+            function(ball){
+                for(i=0;i<ball.number;i++){
+                    colors.push(ball.color);
+                }
+            }
+        );
 
         for(i=0;i<totalBalls();i++){
             balls.push( createBall(colors[i]));
@@ -408,10 +439,10 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         return loc;
     };
     var createBall = function(color){
-        numballs++;
+        numBallsCreated++;
         return {
-            x: ballInitPos(numballs,W).x,
-            y: ballInitPos(numballs,W).y,
+            x: ballInitPos(numBallsCreated,W).x,
+            y: ballInitPos(numBallsCreated,W).y,
             radius: BALLRADIUS,
             color: color,
             vx: Math.floor(Math.random()*10),
@@ -422,12 +453,13 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         };
     };
     var totalBalls = function(){
-        return  $scope.red +
-                $scope.green +
-                $scope.blue +
-                $scope.yellow +
-                $scope.orange +
-                $scope.purple;
+        var totalBalls = 0;
+        $scope.ballObjects.forEach(
+            function(ball){
+                totalBalls+=ball.number;
+            }
+        );
+        return totalBalls;
     };
     var clearCanvas = function() {
         ctx.clearRect(0, 0, W, H);
@@ -514,10 +546,9 @@ app.controller("CoinCtrl", function ($scope,$interval) {
 
 });
 
-app.controller("SpinCtrl", function ($scope) {
+app.controller("SpinCtrl", function ($scope, ProbabilityService) {
 
     $scope.MAXNUMSLICES = 10;
-
 
     var wheel,arcGroup,
         SPINDURATION = 5000,//ms
@@ -537,9 +568,9 @@ app.controller("SpinCtrl", function ($scope) {
     $scope.results = [];
 
     $scope.removeItem = function(index){
-        $scope.values.splice(index, 1);
+        $scope.ballObjects.splice(index, 1);
         $scope.numSlices--;
-        $scope.createArcs();
+        $scope.init();
     };
 
     $scope.slicesChanged = function(){
@@ -550,7 +581,7 @@ app.controller("SpinCtrl", function ($scope) {
         }
 
         while($scope.numSlices > $scope.values.length){
-            var sliceobj = {"name" : $scope.values.length+1,   "color" : getRandomColor(),   "value" : 10};
+            var sliceobj = {"name" : $scope.values.length+1,   "color" : ProbabilityService.getRandomColor(),   "value" : 10};
             $scope.values.push(sliceobj);
         }
 
@@ -559,15 +590,6 @@ app.controller("SpinCtrl", function ($scope) {
         }
         $scope.createArcs();
     };
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF'.split('');
-        var color = '#';
-        for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
 
     var width = 338,
         height = 482,
@@ -737,4 +759,6 @@ app.directive('colorpicker', function(){
         }
     }
 });
+
+
 
