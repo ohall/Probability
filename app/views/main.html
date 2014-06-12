@@ -33,24 +33,7 @@
             </div>
         </tab>
         <tab heading="Coin Toss">
-            <div class="col" ng-controller="CoinCtrl" >
-                <div class="leftCol">
-                    <form>
-                        <p><label> WEIGHT </label></p>
-                        <p><label>Heads:</label><input min="0" max="100" type="number" ng-model="tailsWeight" />%</p>
-                        <p><label>Tails:</label><input min="0" max="100" type="number" ng-model="headsWeight" />%</p>
-                    </form>
-                    <div id="coin" class="coin" ng-click="posclicked()">
-                        <img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>
-                    </div>
-                </div>
-                <div class="rightCol">
-                    <p>Results:</p>
-                    <hr>
-                    <p>Heads: {{headsCount}}</p>
-                    <p>Tails: {{tailsCount}}</p>
-                </div>
-            </div>
+            <prob-coin></prob-coin>
         </tab>
         <tab heading="Cards">
             <div class="col" ng-controller="CardCtrl">
@@ -106,30 +89,7 @@
             </div>
         </tab>
         <tab heading="Spinner">
-            <div class="col" ng-controller="SpinCtrl" ng-init="begin()">
-                <div class="leftCol" style="float: left;width:700px" >
-                    <div id="wheel" style="float: right"></div>
-                    <div>
-                        <label>Number of slices</label>
-                        <input class="smallinput" type="number" max="{{MAXNUMSLICES}}" min="0"
-                               ng-model="numSlices" ng-change="slicesChanged()" ></input>
-                        <form ng-submit="startSpin()" >
-                            <input type="submit" value="Spin" >
-                            <div class="itemconfig" ng-repeat="slice in values">
-                                <input class="smallinput" type="text"   ng-model="slice.name"  ng-change="change()"  />
-                                <input class="smallinput" type="number" ng-model="slice.value" ng-change="change()" />
-                                <input class="colorpicker" colorpicker  ng-model="slice.color" ng-change="change()"  />
-                                <a class="removeitem" ng-click="removeItem($index)" >X</a>
-                            </div>
-                        <br><br>
-                        </form>
-                    </div>
-               </div>
-                <div class="rightCol" style="width: 100px">
-                    <p>Results:</p>
-                    <p ng-repeat="result in results track by $index"> {{result}} </p>
-                </div>
-            </div>
+            <prob-spinner></prob-spinner>
         </tab>
     </tabset>
 </div>

@@ -232,7 +232,6 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     };
 
 });
-
 app.controller('CardCtrl', function ($scope){
     var flipped = false,
         NUM_CARDS = 52;
@@ -266,7 +265,6 @@ app.controller('CardCtrl', function ($scope){
         return numbers[num] + " of " + suits[suit];
     };
 });
-
 app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityService){
     var canvas = document.getElementById("marblecanvas"),
         ctx = canvas.getContext("2d"),
@@ -474,7 +472,6 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         }
     };
 });
-
 app.controller("CoinCtrl", function ($scope,$interval) {
     coinImage("heads");
 
@@ -547,7 +544,6 @@ app.controller("CoinCtrl", function ($scope,$interval) {
     }
 
 });
-
 app.controller("SpinCtrl", function ($scope, ProbabilityService) {
 
     $scope.MAXNUMSLICES = 10;
@@ -733,6 +729,62 @@ app.controller("SpinCtrl", function ($scope, ProbabilityService) {
     $scope.createArcs();
 });
 
+
+
+
+app.directive('probCoin', function(){
+    return{
+        template:   '<div class="col" >' +
+                        '<div class="leftCol">' +
+                            '<form>' +
+                                '<p><label> WEIGHT </label></p>' +
+                                '<p><label>Heads:</label><input min="0" max="100" type="number" ng-model="tailsWeight" />%</p>' +
+                                '<p><label>Tails:</label><input min="0" max="100" type="number" ng-model="headsWeight" />%</p>' +
+                            '</form>' +
+                            '<div id="coin" class="coin" ng-click="posclicked()">' +
+                                '<img style="height: 100%; width: 100%" ng-src="{{coinImage}}"/>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="rightCol">' +
+                            '<p>Results:</p>' +
+                            '<hr>' +
+                            '<p>Heads: {{headsCount}}</p>' +
+                            '<p>Tails: {{tailsCount}}</p>' +
+                        '</div>' +
+                    '</div>',
+        controller:"CoinCtrl",
+        restrict: 'E'
+    }
+});
+app.directive('probSpinner',function(){
+    return{
+        template:   '<div class="col" ng-init="begin()">' +
+                        '<div class="leftCol" style="float: left;width:700px" >' +
+                            '<div id="wheel" style="float: right"></div>' +
+                            '<div>' +
+                                '<label>Number of slices</label>' +
+                                '<input class="smallinput" type="number" max="{{MAXNUMSLICES}}" min="0" ng-model="numSlices" ng-change="slicesChanged()" ></input>' +
+                                '<form ng-submit="startSpin()" >' +
+                                    '<input type="submit" value="Spin" >' +
+                                    '<div class="itemconfig" ng-repeat="slice in values">' +
+                                    '<input class="smallinput" type="text"   ng-model="slice.name"  ng-change="change()"  />' +
+                                    '<input class="smallinput" type="number" ng-model="slice.value" ng-change="change()" />' +
+                                    '<input class="colorpicker" colorpicker  ng-model="slice.color" ng-change="change()"  />' +
+                                    '<a class="removeitem" ng-click="removeItem($index)" >X</a>' +
+                                    '</div>' +
+                                    '<br><br>' +
+                                '</form>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="rightCol" style="width: 100px">' +
+                            '<p>Results:</p>' +
+                            '<p ng-repeat="result in results track by $index"> {{result}} </p>' +
+                        '</div>' +
+                    '</div>',
+        controller:"SpinCtrl",
+        restrict: 'E'
+    }
+});
 app.directive('backImg', function(){
     return function (scope, element, attrs) {
         attrs.$observe('img', function(pUrl) {
@@ -743,7 +795,6 @@ app.directive('backImg', function(){
         });
     };
 });
-
 app.directive('colorpicker', function(){
     return {
         require: '?ngModel',
