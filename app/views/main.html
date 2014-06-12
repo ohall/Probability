@@ -95,25 +95,26 @@
         <tab heading="Spinner">
             <div class="col" ng-controller="SpinCtrl" ng-init="begin()">
                 <div class="leftCol" style="float: left;width:700px" >
-                    <div class="the_wheel" align="center" valign="center">
-                        <canvas class="the_canvas" id="myDrawingCanvas" width="434" height="434"></canvas>
-                    </div>
-                    <div style="width: 100px" >
+                    <div id="wheel" style="float: right"></div>
+                    <div>
+                        <label>Number of slices</label>
+                        <input style="width: 80px" type="number" max="{{MAXNUMSLICES}}" min="0"
+                               ng-model="numSlices" ng-change="slicesChanged()" ></input>
                         <form ng-submit="startSpin()" >
-                            <label>Power</label><br/>
-                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="3">  High   <br/>
-                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="2">  Medium <br/>
-                            <input ng-disabled="wheelState!='reset'" type="radio" ng-model="power" value="1">  Low    <br/>
-                            <br><br>
-                            <input ng-disabled="wheelState!='reset'" type="submit" value="Spin" >
-                        </form>
+                            <input type="submit" value="Spin" >
+                            <div style="width: 300px" ng-repeat="slice in values">
+                                <input style="width: 80px" type="text"   ng-model="slice.name"  ng-change="change()"  />
+                                <input style="width: 80px" type="number" ng-model="slice.value" ng-change="change()" />
+                                <input style="width: 20px" colorpicker   ng-model="slice.color" ng-change="change()"  />
+                                <a ng-click="removeItem($index)" style="cursor: pointer;margin-left: 10px" >X</a>
+                            </div>
                         <br><br>
-                        <p>Results:</p>
-                        <p ng-repeat="result in results track by $index"> {{result}} </p>
+                        </form>
                     </div>
                </div>
                 <div class="rightCol" style="width: 100px">
-
+                    <p>Results:</p>
+                    <p ng-repeat="result in results track by $index"> {{result}} </p>
                 </div>
             </div>
         </tab>

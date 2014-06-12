@@ -36,6 +36,12 @@
     width: 434px;
 }
 
+.preview {
+    height:150px;
+    width: 150px;
+    border: 1px black solid;
+}
+
 /*****************/
 /* Playing Cards */
 /*****************/
@@ -182,3 +188,4 @@
     -o-transform:rotate(180deg); /* Opera */
     -moz-transform:rotate(180deg); /* Firefox */
 }
+

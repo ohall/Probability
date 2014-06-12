@@ -184,7 +184,7 @@ app.controller('CardCtrl', function ($scope){
     var flipped = false,
         NUM_CARDS = 52;
 
-    $scope.back = "styles/cards/b1fv.png"
+    $scope.back = "styles/cards/b1fv.png";
     $scope.results = [];
 
     $scope.flip = function(){
@@ -348,7 +348,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
         for(i=0;i<totalBalls();i++){
             balls.push( createBall(colors[i]));
         }
-    }
+    };
     var ballsPerRow = function(ballwidth,canvasWidth,padding){
         return Math.floor( ( canvasWidth- ( 2 * padding ) )/ballwidth );
     };
@@ -392,7 +392,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout){
     };
     var clearCanvas = function() {
         ctx.clearRect(0, 0, W, H);
-    }
+    };
     var reset = function(){
         clearCanvas();
         setBalls();
@@ -421,12 +421,12 @@ app.controller("CoinCtrl", function ($scope,$interval) {
     $scope.tailsWeight = 50;
     $scope.headsWeight = 50;
 
-    $scope.$watch('tailsWeight', function (value) {
+    $scope.$watch('tailsWeight', function () {
         $scope.headsWeight = 100-$scope.tailsWeight;
         odds = $scope.headsWeight/100;
     });
 
-    $scope.$watch('headsWeight', function (value) {
+    $scope.$watch('headsWeight', function () {
         $scope.tailsWeight = 100-$scope.headsWeight;
         odds = $scope.headsWeight/100;
     });
@@ -475,128 +475,199 @@ app.controller("CoinCtrl", function ($scope,$interval) {
 
 });
 
-app.controller("SpinCtrl", function ($scope,$timeout) {
+app.controller("SpinCtrl", function ($scope) {
 
-    var canvasId         = "myDrawingCanvas",
-        wheelImageName   = "styles/prizewheel.png",
-        theSpeed         = 1,
-        pointerAngle     = 0,
-        prizes = [
-        {"name" : "1", "startAngle" : 0,   "endAngle" : 44},
-        {"name" : "2", "startAngle" : 45,  "endAngle" : 89},
-        {"name" : "3", "startAngle" : 90,  "endAngle" : 134},
-        {"name" : "4", "startAngle" : 135, "endAngle" : 179},
-        {"name" : "5", "startAngle" : 180, "endAngle" : 224},
-        {"name" : "6", "startAngle" : 225, "endAngle" : 269},
-        {"name" : "7", "startAngle" : 270, "endAngle" : 314},
-        {"name" : "8", "startAngle" : 315, "endAngle" : 360}
-        ],
-        surface,wheel,
-        angle = 0,
-        targetAngle = 0,
-        currentAngle = 0,
-        randomLastThreshold = 150,
-        spinTimer;
+    $scope.MAXNUMSLICES = 10;
 
-    $scope.wheelState = 'reset';
 
-    $scope.results = [];
-
-    $scope.power = 1;
-    $scope.begin = function(){
-        surface = document.getElementById(canvasId);
-        if (surface.getContext){
-            wheel = new Image();
-            wheel.onload = initialDraw;
-            wheel.src = wheelImageName;
-        }
-    };
-
-    function initialDraw(){
-        var surfaceContext = surface.getContext('2d');
-        surfaceContext.drawImage(wheel, 0, 0);
-    }
-
-    var doSpin = function(){
-        var surfaceContext = surface.getContext('2d');
-        surfaceContext.save();
-        surfaceContext.translate(wheel.width * 0.5, wheel.height * 0.5);
-        surfaceContext.rotate(DegToRad(currentAngle));
-        surfaceContext.translate(-wheel.width * 0.5, -wheel.height * 0.5);
-        surfaceContext.drawImage(wheel, 0, 0);
-        surfaceContext.restore();
-        currentAngle += angle;
-        if (currentAngle < targetAngle){
-            var angleRemaining = (targetAngle - currentAngle);
-            if (angleRemaining > 6480){
-                angle = 55;
-            }else if (angleRemaining > 5000){
-                angle = 45;
-            }else if (angleRemaining > 4000){
-                angle = 30;
-            }else if (angleRemaining > 2500){
-                angle = 25;
-            }else if (angleRemaining > 1800){
-                angle = 15;
-            }else if (angleRemaining > 900){
-                angle = 11.25;
-            }else if (angleRemaining > 400){
-                angle = 7.5;
-            }else if (angleRemaining > 220){
-                angle = 3.80;
-            }else if (angleRemaining > randomLastThreshold){
-                angle = 1.90;
-            }else{
-                angle = 1;
-            }
-            spinTimer = $timeout(doSpin, theSpeed);
-        }else{
-            $scope.wheelState = 'reset';
-            var times360 = Math.floor(currentAngle / 360),
-                rawAngle = (currentAngle - (360 * times360)),
-                relativeAngle =  Math.floor(pointerAngle - rawAngle);
-
-            if (relativeAngle < 0){
-                relativeAngle = 360 - Math.abs(relativeAngle);
-            }
-            for (var x = 0; x < (prizes.length); x ++){
-                if ((relativeAngle >= prizes[x]['startAngle']) && (relativeAngle <= prizes[x]['endAngle'])){
-                    $scope.results.push( prizes[x]['name'] );
-                    $scope.$apply();
-                    break;
-                }
-            }
-        }
-    };
-
+    var wheel,arcGroup,
+        SPINDURATION = 5000,//ms
+        NUMROTATIONS = 25;
 
     $scope.startSpin = function(){
-        var stopAngle = Math.floor(Math.random() * 360);
-        resetWheel();
-
-        if ((typeof(stopAngle) !== 'undefined') && ($scope.wheelState == 'reset') && ($scope.power)){
-            stopAngle = (360 + pointerAngle) - stopAngle;
-            targetAngle = (360 * ($scope.power * 6) + stopAngle);
-            randomLastThreshold = Math.floor(90 + (Math.random() * 90));
-            $scope.wheelState = 'spinning';
-            doSpin();
-        }
+        cycle();
     };
 
-    function DegToRad(d){
-        return d * 0.0174532925199432957;
+    $scope.values=[
+        {"name" : "blue",   "color" : "blue",   "value" : 33},
+        {"name" : "red",    "color" : "red",    "value" : 33},
+        {"name" : "green",  "color" : "green",  "value" : 34}
+    ];
+    $scope.numSlices = $scope.values.length;
+    $scope.wheelState = 'reset';
+    $scope.results = [];
+
+    $scope.removeItem = function(index){
+        $scope.values.splice(index, 1);
+        $scope.numSlices--;
+        $scope.createArcs();
+    };
+
+    $scope.slicesChanged = function(){
+
+        if($scope.numSlices>$scope.MAXNUMSLICES){
+            $scope.numSlices=$scope.MAXNUMSLICES;
+            $scope.$apply();
+        }
+
+        while($scope.numSlices > $scope.values.length){
+            var sliceobj = {"name" : $scope.values.length+1,   "color" : getRandomColor(),   "value" : 10};
+            $scope.values.push(sliceobj);
+        }
+
+        while($scope.numSlices < $scope.values.length){
+            $scope.values.splice($scope.values.length-1, 1);
+        }
+        $scope.createArcs();
+    };
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF'.split('');
+        var color = '#';
+        for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
     }
 
-    var resetWheel = function(){
-        clearTimeout(spinTimer);
-        angle 		 = 0;
-        targetAngle  = 0;
-        currentAngle = 0;
-        $scope.wheelState = 'reset';
-        initialDraw();
+    var width = 338,
+        height = 482,
+        angle = 0,
+        radius = Math.min(width, height) / 2, path, text;
+
+
+     var arc = d3.svg.arc()
+        .outerRadius(radius - 10)
+        .innerRadius(0);
+
+    var pie = d3.layout.pie()
+        .sort(null)
+        .value(function(d) { return d.value; });
+
+    var svg = d3.select("#wheel").append("svg")
+        .attr("width", width)
+        .attr("height", height);
+
+    svg.append("svg:image")
+        .attr('width', width)
+        .attr('height', height)
+        .attr("xlink:href","styles/wheel_back.png");
+
+    var wheelg = svg.append("g")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("g");
+
+    $scope.createArcs = function(){
+        if(arcGroup){
+            arcGroup.remove()
+        }
+        arcGroup = wheelg.selectAll(".arc")
+            .data(pie( $scope.values ))
+            .enter().append("g")
+            .attr("class", "arc");
+
+        path = arcGroup.append("path")
+            .attr("d", arc)
+            .style("fill", function(d) { return d.data.color; })
+            .each(function(d) { pieVal(d); })
+            .each(function(d) { this._current = d; });
+
+        text = arcGroup.append("text")
+            .attr("transform", function(d) { return "translate(" + arc.centroid(d) + ")"; })
+            .attr("dy", ".35em")
+            .style("text-anchor", "middle")
+            .text(function(d) { return d.data.name; });
+    };
+
+
+    var radiansToDegrees = function( rads ){
+        return rads * (180/Math.PI);
+    };
+
+    var degreesToRadians = function(degrees) {
+        return degrees * Math.PI / 180;
+    };
+
+    function pieVal(pv){
+        var slice = $scope.values.filter(function( obj ) {
+            return obj.name == pv.data.name;
+        })[0];
+        slice.startAngleDeg = radiansToDegrees(pv.startAngle);
+        slice.endAngleDeg = radiansToDegrees(pv.endAngle);
+    }
+
+    $scope.change = function(){
+        for(var i = 0 ;i<$scope.values.length;i++){
+            if( !( typeof $scope.values[i].value === "number" ) ){
+                $scope.values[i].value = 0;
+            }
+        }
+
+        path = path.data(pie( $scope.values )); // compute the new angles
+        path.transition()
+            .duration(750)
+            .style("fill", function(d) { return d.data.color; })
+            .each(function(d) { pieVal(d); })
+            .attrTween("d", arcTween); // redraw the arcs
+
+        text.data(pie( $scope.values ));
+        text.transition().ease("elastic").duration(750)
+            .attr("transform", function(d) {return "translate(" + arc.centroid(d) + ")"; })
+            .text(function(d) { return d.data.name; });
+    };
+
+    function cycle() {
+
+        if(angle!==0){//reset the wheel to 0 for spin
+            wheelg.transition()
+                    .duration(250)
+                    .ease("cubic-in")
+                    .each("end", doSpin )
+                    .attrTween("transform", function() { return d3.interpolateString("rotate(-"+angle+")" , "rotate(0)" );});
+        }else{
+            doSpin();
+        }
+
+
+        function doSpin(){
+            var resultDegree = Math.random() * 360;
+            angle = resultDegree * NUMROTATIONS;
+            wheelg.transition()
+                    .delay(250)
+                    .each("end", function(){ getResultSlice( angle % 360 ) } )
+                    .duration(SPINDURATION)
+                    .attrTween("transform", function() { return d3.interpolateString("rotate(0)", "rotate(-" + angle + ")");});
+        }
+
+
     }
 
 
+    var getResultSlice = function(resultDeg){
+        $scope.values.some(
+            function( slice ) {
+                if( slice.startAngleDeg < resultDeg && slice.endAngleDeg > resultDeg ){
+                    $scope.results.push(slice.name);
+                    $scope.$apply();
+                    return true;
+                }
+            }
+        );
+
+    };
+
+
+    function arcTween(a) {
+        var i = d3.interpolate(this._current, a);
+        this._current = i(0);
+        return function(t) {
+            return arc(i(t));
+        };
+    }
+
+    $scope.createArcs();
 });
 
 app.directive('backImg', function(){
@@ -610,9 +681,21 @@ app.directive('backImg', function(){
     };
 });
 
-
-
-
-
-
+app.directive('colorpicker', function(){
+    return {
+        require: '?ngModel',
+        link: function (scope, elem, attrs, ngModel) {
+            elem.spectrum();
+            if (!ngModel) return;
+            ngModel.$render = function () {
+                elem.spectrum('set', ngModel.$viewValue || '#fff');
+            };
+            elem.on('change', function () {
+                scope.$apply(function () {
+                    ngModel.$setViewValue( elem.spectrum('get').toRgbString() );
+                });
+            });
+        }
+    }
+});
 
