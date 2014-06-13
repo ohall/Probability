@@ -46,7 +46,6 @@
     float: right;
     width: 500px;
     height: 600px;
-    background-image: url(wheel_back.png);
     background-position: top center;
     background-repeat: no-repeat;
 }
@@ -106,7 +105,7 @@
 /* front pane, placed above back */
 .front {
     z-index: 2;
-    background: url(cards/b1fv.png) 0 0 no-repeat;
+    background: url("../images/cardback.png") 0 0 no-repeat;
 }
 
 /* back, initially hidden pane */
@@ -129,26 +128,6 @@
     -webkit-transition-duration:200ms;
     -o-transition-duration:200ms;
     -moz-transition-duration:200ms;
-}
-
-.heads{
-    background-image: url("heads.png");
-}
-
-.tailsma1{
-    background-image: url("tailsma1.png");
-}
-
-.tailsma{
-    background-image: url("tailsma.png");
-}
-
-.heads1{
-    background-image: url("heads1.png");
-}
-
-.dist{
-    background-image: url("dist.png");
 }
 
 .flipup{

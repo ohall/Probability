@@ -13,56 +13,29 @@ app.service('ProbabilityService', function(){
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
+        },
+        getImageURL:function(img){
+            return "images/"+img+".png";
         }
     };
 });
 
-app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
+app.controller('DiceCtrl', function ($scope,$interval,$timeout,ProbabilityService) {
     var rollingImgs = [
-        [
-            "styles/die-1.gif",
-            "styles/dices-1.gif",
-            "styles/die-1.gif",
-            "styles/dicet-1.gif"
-        ],
-        [
-            "styles/die-2.gif",
-            "styles/dices-2.gif",
-            "styles/die-2.gif",
-            "styles/dicet-2.gif"
-        ],
-        [
-            "styles/die-3.gif",
-            "styles/dices-3.gif",
-            "styles/die-3.gif",
-            "styles/dicet-3.gif"
-        ],
-        [
-            "styles/die-4.gif",
-            "styles/dices-4.gif",
-            "styles/die-4.gif",
-            "styles/dicet-4.gif"
-        ],
-        [
-            "styles/die-5.gif",
-            "styles/dices-5.gif",
-            "styles/die-5.gif",
-            "styles/dicet-5.gif"
-        ],
-        [
-            "styles/die-6.gif",
-            "styles/dices-6.gif",
-            "styles/die-6.gif",
-            "styles/dicet-6.gif"
-        ]
+        ["die-1","dices-1","die-1","dicet-1"],
+        ["die-2","dices-2","die-2","dicet-2"],
+        ["die-3","dices-3","die-3","dicet-3"],
+        ["die-4","dices-4","die-4","dicet-4"],
+        ["die-5","dices-5","die-5","dicet-5"],
+        ["die-6","dices-6","die-6","dicet-6"]
     ],
         faces = [
-            { id:1, img:"styles/die-1.gif" },
-            { id:2, img:"styles/die-2.gif" },
-            { id:3, img:"styles/die-3.gif" },
-            { id:4, img:"styles/die-4.gif" },
-            { id:5, img:"styles/die-5.gif" },
-            { id:6, img:"styles/die-6.gif" }
+            { id:1, img:ProbabilityService.getImageURL("die-1") },
+            { id:2, img:ProbabilityService.getImageURL("die-2") },
+            { id:3, img:ProbabilityService.getImageURL("die-3") },
+            { id:4, img:ProbabilityService.getImageURL("die-4") },
+            { id:5, img:ProbabilityService.getImageURL("die-5") },
+            { id:6, img:ProbabilityService.getImageURL("die-6") }
         ],
         canvas =  document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d"),
@@ -165,10 +138,10 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         if(!stopRoll){//we're looping through die faces
             var faceImages = [];
             this.faces.forEach(function(face){
-                  faceImages = $.merge(faceImages,rollingImgs[face-1]);
+                  faceImages = $.merge(faceImages,  rollingImgs[face-1] );
             });
             this.index = getDieAnimationImage(this.direction,this.index,faceImages);
-            image.src = faceImages[this.index];
+            image.src = ProbabilityService.getImageURL( faceImages[this.index] );
             ctx.drawImage(image, this.x, this.y);
         }else{
             if(!this.stopped) {//we're choosing a face to land on
@@ -230,17 +203,17 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
     };
 
 });
-app.controller('CardCtrl', function ($scope){
+app.controller('CardCtrl', function ($scope,ProbabilityService){
     var flipped = false,
         NUM_CARDS = 52;
 
-    $scope.back = "styles/cards/b1fv.png";
+    $scope.back = ProbabilityService.getImageURL("cardback");
     $scope.results = [];
 
     $scope.flip = function(){
         if(!flipped){
             var card = Math.floor(Math.random()*NUM_CARDS)+1;
-            $scope.card ="styles/cards/" + card + ".png";
+            $scope.card = ProbabilityService.getImageURL(card);
             var resItem = {};
             resItem.name = getCardString(card);
             resItem.img = $scope.card;
@@ -451,7 +424,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         }
     };
 });
-app.controller('CoinCtrl', function ($scope,$interval) {
+app.controller('CoinCtrl', function ($scope,$interval,ProbabilityService) {
     coinImage("heads");
 
     var framenum = 0,
@@ -510,7 +483,7 @@ app.controller('CoinCtrl', function ($scope,$interval) {
     }
 
     function coinImage(img){
-        $scope.coinImage = "styles/"+img+".png";
+        $scope.coinImage = ProbabilityService.getImageURL(img);
     }
 
     function janimate(starting){
@@ -591,7 +564,7 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
     svg.append("svg:image")
         .attr('width', width)
         .attr('height', height)
-        .attr("xlink:href","styles/wheel_back.png");
+        .attr("xlink:href", ProbabilityService.getImageURL("spinback") );
 
     var wheelg = svg.append("g")
         .attr("width", width)
