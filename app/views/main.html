@@ -1,95 +1,10 @@
 <div>
     <h2>Probability Prototype</h2>
-    <!--<h2>Data Generators</h2>-->
     <tabset>
-        <tab heading="Dice">
-            <div class="col" ng-controller="DiceCtrl">
-                <div class="leftCol">
-                    <p><label>Dice:</label>
-                        <input min="0" max="10" ng-disabled="running"
-                               type="number" ng-model="numDice"
-                               ng-change="numDiceChanged()" /></p>
-                    <button ng-click="dice()" style="margin-bottom:10px">Roll</button>
-                    <canvas id="dicecanvas" class="throwingCanvas"></canvas>
-                </div>
-                <div class="rightCol">
-                    <p>Die Faces:</p>
-                    <div class="itemconfig" ng-repeat="die in diceValues">
-                        {{die.id}}
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[0]"/>
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[1]"/>
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[2]"/>
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[3]"/>
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[4]"/>
-                        <input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[5]"/>
-                    </div>
-
-                    <p>Results:</p>
-                    <hr>
-                    <p ng-repeat="result in diceResults">
-                       Die {{result.num}} |   {{result.rolls.join(", ")}}
-                    </p>
-                </div>
-            </div>
-        </tab>
-        <tab heading="Coin Toss">
-            <prob-coin></prob-coin>
-        </tab>
-        <tab heading="Cards">
-            <div class="col" ng-controller="CardCtrl">
-                <div class="leftCol">
-                    <div class="flip-container" >
-                        <div class="flipper" ng-click="flip()">
-                            <div class="front" img="{{back}}"></div>
-                            <div class="back" back-img img="{{card}}"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="rightCol" style="width: 250px;float: right">
-                    <p>Cards Drawn:</p>
-                    <p ng-repeat="card in results track by $index">
-                        <img ng-src="{{card.img}}" style="width: 28px;height: 41px">
-                        {{card.name}}
-                    </p>
-                </div>
-            </div>
-        </tab>
-        <tab heading="Marbles">
-            <div class="col" ng-controller="MarbleCtrl" ng-init="init()">
-               <div class="leftCol" style="width: 450px;">
-                    <label>Number of slices</label>
-                    <input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0"
-                          ng-model="ballTypeCount" ng-change="ballsChanged()" ></input>
-                    <form ng-submit="runMarbleAni()">
-                        <div class="itemconfig" ng-repeat="balltype in ballObjects">
-                            <input class="smallinput" type="text"   ng-model="balltype.name"  ng-change="init()"  />
-                            <input class="smallinput" type="number" ng-model="balltype.number" ng-change="init()" />
-                            <input class="colorpicker" colorpicker  ng-model="balltype.color" ng-change="init()"  />
-                            <a class="removeitem" ng-click="removeItem($index)" >X</a>
-                        </div>
-                        <input type="submit"    value="Run">
-                        <input type="button" ng-if="running"  value="Choose"  ng-click="choose()">
-                        <input type="button" ng-if="running"  value="Stop"    ng-click="stop()">
-                    </form>
-
-               </div>
-                <div id="marblejar" class="rightCol" style="width: 350px">
-                    <canvas id="marblecanvas" class="throwingCanvas"></canvas>
-
-                    <div class="binarea">
-                        <label>Bin   <a ng-click="clearBalls()">clear</a></label>
-                        <div class="bindiv">
-                            <span class="ballholder" ng-repeat="ball in binnedBalls track by $index" >
-                                <div class="circle" style="{{ball.color+';'+ball.grad}}"/>
-                            </span>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </tab>
-        <tab heading="Spinner">
-            <prob-spinner></prob-spinner>
-        </tab>
+        <tab heading="Dice"> <prob-dice></prob-dice> </tab>
+        <tab heading="Coin"> <prob-coin></prob-coin> </tab>
+        <tab heading="Cards"> <prob-cards></prob-cards> </tab>
+        <tab heading="Marbles"> <prob-marbles></prob-marbles> </tab>
+        <tab heading="Spinner"> <prob-spinner></prob-spinner> </tab>
     </tabset>
 </div>

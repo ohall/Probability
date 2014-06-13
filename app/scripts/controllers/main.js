@@ -270,9 +270,9 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         ctx = canvas.getContext("2d"),
         W = 350,
         H = 350,
-        BALLRADIUS = 15,
+        BALL_RADIUS = 15,
         balls,bounceFactor = 0.1,
-        updates,timer,numBallsCreated;
+        updates,numBallsCreated;
 
     canvas.height = H;
     canvas.width = W;
@@ -282,7 +282,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     $scope.MAXDIFFBALLS = 10;
 
     $scope.ballObjects = [
-        {name:'blue',   number:4,   color:'blue'   },
+        {name:'blue',   number:1,   color:'blue'   },
         {name:'orange', number:1,   color:'orange' },
         {name:'green',  number:1,   color:'green'  }
     ];
@@ -328,31 +328,12 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     };
 
     $scope.runMarbleAni = function(){
-
         $( "#marblejar" ).effect( "shake" );
-        var done = function(){
-            $scope.stop();
-            $scope.choose();
-        };
-
-        if($scope.running){
-            done()
-        }
-
-        setBalls();
-
-        if(timer){
-            $timeout.cancel(timer);
-            timer = undefined;
-        }
-
-        if(!$scope.running){
+        $timeout(function(){//pause a beat before releasing balls
             $scope.running = true;
             updates = $interval(update, 1000/60);
-        }else{
-            $scope.stop();
-        }
-//        timer = $timeout(done,1500);
+            setBalls();
+        },50);
     };
 
     $scope.init = function(){
@@ -388,46 +369,45 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
             balls[i].y+=balls[i].dy;
         }
     };
+
     var drawFunc = function() {
         // Here, we'll first begin drawing the path and then use the arc() function to draw the circle. The arc function accepts 6 parameters, x position, y position, radius, start angle, end angle and a boolean for anti-clockwise direction.
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
 
         //createRadialGradient(x0, y0, r0, x1, y1, r1);
-        var radialGradient = ctx.createRadialGradient(this.x+2, this.y+2, BALLRADIUS, this.x+2, this.y+2, 1);
+        var radialGradient = ctx.createRadialGradient(this.x+2, this.y+2, BALL_RADIUS, this.x+2, this.y+2, 1);
         radialGradient.addColorStop(1,"#fff" );
         radialGradient.addColorStop(0, this.color);
         ctx.fillStyle = radialGradient;
         ctx.fill();
         ctx.closePath();
     };
+
     var setBalls = function(){
         var i,
         colors = [];
         balls = [];
         numBallsCreated = 0;
 
-        $scope.ballObjects.forEach(
-            function(ball){
-                for(i=0;i<ball.number;i++){
-                    colors.push(ball.color);
-                }
+        $scope.ballObjects.forEach(function(ball){
+            for(i=0;i<ball.number;i++){
+                colors.push(ball.color);
             }
-        );
+        });
 
         for(i=0;i<totalBalls();i++){
             balls.push( createBall(colors[i]));
         }
     };
+
     var ballsPerRow = function(ballwidth,canvasWidth,padding){
         return Math.floor( ( canvasWidth- ( 2 * padding ) )/ballwidth );
     };
-    var ballInitPos = function(numballs,width){
-        var padding=30,
-            row = 1,
-            loc = {};
 
-        var ballsInRow = ballsPerRow(30,width,padding);
+    var ballInitPos = function(numballs,width){
+        var padding=30, row = 1, loc = {},
+            ballsInRow = ballsPerRow(30,width,padding);
 
         for(var i = 0;i<numballs;i++){
             if( i >= ballsInRow * row ){
@@ -438,12 +418,13 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         loc.y = padding + 30 * row;
         return loc;
     };
+
     var createBall = function(color){
         numBallsCreated++;
         return {
             x: ballInitPos(numBallsCreated,W).x,
             y: ballInitPos(numBallsCreated,W).y,
-            radius: BALLRADIUS,
+            radius: BALL_RADIUS,
             color: color,
             vx: Math.floor(Math.random()*10),
             vy: Math.floor(Math.random()*10),
@@ -452,6 +433,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
             draw: drawFunc
         };
     };
+
     var totalBalls = function(){
         var totalBalls = 0;
         $scope.ballObjects.forEach(
@@ -461,6 +443,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         );
         return totalBalls;
     };
+
     var clearCanvas = function() {
         ctx.clearRect(0, 0, W, H);
     };
@@ -472,7 +455,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         }
     };
 });
-app.controller("CoinCtrl", function ($scope,$interval) {
+app.controller('CoinCtrl', function ($scope,$interval) {
     coinImage("heads");
 
     var framenum = 0,
@@ -544,7 +527,7 @@ app.controller("CoinCtrl", function ($scope,$interval) {
     }
 
 });
-app.controller("SpinCtrl", function ($scope, ProbabilityService) {
+app.controller('SpinCtrl', function ($scope, ProbabilityService) {
 
     $scope.MAXNUMSLICES = 10;
 
@@ -717,7 +700,6 @@ app.controller("SpinCtrl", function ($scope, ProbabilityService) {
 
     };
 
-
     function arcTween(a) {
         var i = d3.interpolate(this._current, a);
         this._current = i(0);
@@ -729,9 +711,90 @@ app.controller("SpinCtrl", function ($scope, ProbabilityService) {
     $scope.createArcs();
 });
 
-
-
-
+app.directive('probDice', function(){
+    return{
+        template:   '<div class="col" ng-controller="DiceCtrl">' +
+                        '<div class="leftCol">' +
+                            '<p><label>Dice:</label>' +
+                            '<input min="0" max="10" ng-disabled="running" type="number" ng-model="numDice" ng-change="numDiceChanged()" /></p>' +
+                            '<button ng-click="dice()" style="margin-bottom:10px">Roll</button>' +
+                            '<canvas id="dicecanvas" class="throwingCanvas"></canvas>' +
+                        '</div>' +
+                        '<div class="rightCol">' +
+                            '<p>Die Faces:</p>' +
+                            '<div class="itemconfig" ng-repeat="die in diceValues">{{die.id}}' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[0]"/>' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[1]"/>' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[2]"/>' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[3]"/>' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[4]"/>' +
+                                '<input class="singleinput" type="number" min="1" max="6" ng-model="die.faces[5]"/>' +
+                            '</div>' +
+                            '<p>Results:</p>' +
+                            '<hr>' +
+                                '<p ng-repeat="result in diceResults"> Die {{result.num}} |   {{result.rolls.join(", ")}} </p>' +
+                        '</div>' +
+                    '</div>',
+        controller:'DiceCtrl',
+        restrict: 'E'
+    }
+});
+app.directive('probCards', function(){
+   return{
+       template:    '<div class="col" ng-controller="CardCtrl">' +
+                       '<div class="leftCol">' +
+                           '<div class="flip-container" >' +
+                               '<div class="flipper" ng-click="flip()">' +
+                                   '<div class="front" img="{{back}}"></div>' +
+                                   '<div class="back" back-img img="{{card}}"></div>' +
+                               '</div>' +
+                           '</div>' +
+                       '</div>' +
+                       '<div class="rightCol" style="width: 250px;float: right">' +
+                           '<p>Cards Drawn:</p>' +
+                           '<p ng-repeat="card in results track by $index">' +
+                               '<img ng-src="{{card.img}}" style="width: 28px;height: 41px">{{card.name}}' +
+                           '</p>' +
+                       '</div>' +
+                   '</div>',
+       controller:'CardCtrl',
+       restrict: 'E'
+   }
+});
+app.directive('probMarbles', function(){
+    return{
+        template:   '<div class="col" ng-controller="MarbleCtrl" ng-init="init()">' +
+                        '<div class="leftCol" style="width: 450px;">' +
+                            '<label>Number of slices</label>' +
+                            '<input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0" ng-model="ballTypeCount" ng-change="ballsChanged()" ></input>' +
+                            '<form ng-submit="runMarbleAni()">' +
+                                '<div class="itemconfig" ng-repeat="balltype in ballObjects">' +
+                                    '<input class="smallinput" type="text"   ng-model="balltype.name"  ng-change="init()"  />' +
+                                    '<input class="smallinput" type="number" ng-model="balltype.number" ng-change="init()" />' +
+                                    '<input class="colorpicker" colorpicker  ng-model="balltype.color" ng-change="init()"  />' +
+                                    '<a class="removeitem" ng-click="removeItem($index)" >X</a>' +
+                                '</div>' +
+                                '<input type="submit" value="Run" ng-disabled="running">' +
+                                '<input type="button" ng-if="running"  value="Choose"  ng-click="choose()">' +
+                                '<input type="button" ng-if="running"  value="Stop"    ng-click="stop()">' +
+                            '</form>' +
+                       '</div>' +
+                        '<div id="marblejar" class="rightCol" style="width: 350px">' +
+                            '<canvas id="marblecanvas" class="throwingCanvas"></canvas>' +
+                            '<div class="binarea">' +
+                                '<label>Bin   <a ng-click="clearBalls()">clear</a></label>' +
+                                '<div class="bindiv">' +
+                                    '<span class="ballholder" ng-repeat="ball in binnedBalls track by $index" >' +
+                                        '<div class="circle" style="{{ball.color+\';\'+ball.grad}}"/>' +
+                                    '</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>',
+        controller:'MarbleCtrl',
+        restrict: 'E'
+    }
+});
 app.directive('probCoin', function(){
     return{
         template:   '<div class="col" >' +
