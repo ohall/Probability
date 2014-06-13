@@ -7,14 +7,14 @@ app.service('ProbabilityService', function(){
 
     return{
         getRandomColor:function() {
-            var letters = '0123456789ABCDEF'.split('');
-            var color = '#';
+            var letters = '0123456789ABCDEF'.split(""),
+                color = '#';
             for (var i = 0; i < 6; i++ ) {
                 color += letters[Math.floor(Math.random() * 16)];
             }
             return color;
         }
-    }
+    };
 });
 
 app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
@@ -29,7 +29,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             "styles/die-2.gif",
             "styles/dices-2.gif",
             "styles/die-2.gif",
-            "styles/dicet-2.gif",
+            "styles/dicet-2.gif"
         ],
         [
             "styles/die-3.gif",
@@ -156,13 +156,13 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
             if($scope.diceChanged){
                 $scope.diceResults[i] = d;
             }else if(!$scope.diceResults[i]){
-                $scope.diceResults.push(d)
+                $scope.diceResults.push(d);
             }
         }
     };
 
     var drawFunc = function() {
-        var image = new Image;
+        var image = new Image();
 
         if(!stopRoll){//we're looping through die faces
             var faceImages = [];
@@ -212,7 +212,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         var facesToReturn = [];
         allfaces.forEach(function(face){
             if(facesToReturn.indexOf(face) === -1){
-                facesToReturn.push(face)
+                facesToReturn.push(face);
             }
 
         });
@@ -221,7 +221,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
 
     var getDieAnimationImage =  function(directionInt,index,faces){
         if(numupdates%6===0){
-            if(angular.isNumber(directionInt) && (directionInt % 2 == 0)){
+            if(angular.isNumber(directionInt) && (directionInt % 2 === 0)){
                 return ( index === 0 ) ? faces.length-1 : index-1;
             }else{//spin other direction
                 return ( index === faces.length-1 ) ? 0 : index+1;
@@ -603,7 +603,7 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
 
     $scope.createArcs = function(){
         if(arcGroup){
-            arcGroup.remove()
+            arcGroup.remove();
         }
         arcGroup = wheelg.selectAll(".arc")
             .data(pie( $scope.values ))
@@ -628,13 +628,9 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
         return rads * (180/Math.PI);
     };
 
-    var degreesToRadians = function(degrees) {
-        return degrees * Math.PI / 180;
-    };
-
     function pieVal(pv){
         var slice = $scope.values.filter(function( obj ) {
-            return obj.name == pv.data.name;
+            return obj.name === pv.data.name;
         })[0];
         slice.startAngleDeg = radiansToDegrees(pv.startAngle);
         slice.endAngleDeg = radiansToDegrees(pv.endAngle);
@@ -642,7 +638,7 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
 
     $scope.change = function(){
         for(var i = 0 ;i<$scope.values.length;i++){
-            if( !( typeof $scope.values[i].value === "number" ) ){
+            if( typeof $scope.values[i].value !== "number" ){
                 $scope.values[i].value = 0;
             }
         }
@@ -678,7 +674,7 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
             angle = resultDegree * NUMROTATIONS;
             wheelg.transition()
                     .delay(250)
-                    .each("end", function(){ getResultSlice( angle % 360 ) } )
+                    .each("end", function(){ getResultSlice( angle % 360 ); } )
                     .duration(SPINDURATION)
                     .attrTween("transform", function() { return d3.interpolateString("rotate(0)", "rotate(-" + angle + ")");});
         }
@@ -737,7 +733,7 @@ app.directive('probDice', function(){
                     '</div>',
         controller:'DiceCtrl',
         restrict: 'E'
-    }
+    };
 });
 app.directive('probCards', function(){
    return{
@@ -759,14 +755,14 @@ app.directive('probCards', function(){
                    '</div>',
        controller:'CardCtrl',
        restrict: 'E'
-   }
+   };
 });
 app.directive('probMarbles', function(){
     return{
         template:   '<div class="col" ng-controller="MarbleCtrl" ng-init="init()">' +
                         '<div class="leftCol" style="width: 450px;">' +
                             '<label>Number of slices</label>' +
-                            '<input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0" ng-model="ballTypeCount" ng-change="ballsChanged()" ></input>' +
+                            '<input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0" ng-model="ballTypeCount" ng-change="ballsChanged()"/>' +
                             '<form ng-submit="runMarbleAni()">' +
                                 '<div class="itemconfig" ng-repeat="balltype in ballObjects">' +
                                     '<input class="smallinput" type="text"   ng-model="balltype.name"  ng-change="init()"  />' +
@@ -793,7 +789,7 @@ app.directive('probMarbles', function(){
                     '</div>',
         controller:'MarbleCtrl',
         restrict: 'E'
-    }
+    };
 });
 app.directive('probCoin', function(){
     return{
@@ -817,7 +813,7 @@ app.directive('probCoin', function(){
                     '</div>',
         controller:"CoinCtrl",
         restrict: 'E'
-    }
+    };
 });
 app.directive('probSpinner',function(){
     return{
@@ -826,7 +822,7 @@ app.directive('probSpinner',function(){
                             '<div id="wheel" style="float: right"></div>' +
                             '<div>' +
                                 '<label>Number of slices</label>' +
-                                '<input class="smallinput" type="number" max="{{MAXNUMSLICES}}" min="0" ng-model="numSlices" ng-change="slicesChanged()" ></input>' +
+                                '<input class="smallinput" type="number" max="{{MAXNUMSLICES}}" min="0" ng-model="numSlices" ng-change="slicesChanged()" />' +
                                 '<form ng-submit="startSpin()" >' +
                                     '<input type="submit" value="Spin" >' +
                                     '<div class="itemconfig" ng-repeat="slice in values">' +
@@ -846,7 +842,7 @@ app.directive('probSpinner',function(){
                     '</div>',
         controller:"SpinCtrl",
         restrict: 'E'
-    }
+    };
 });
 app.directive('backImg', function(){
     return function (scope, element, attrs) {
@@ -863,7 +859,9 @@ app.directive('colorpicker', function(){
         require: '?ngModel',
         link: function (scope, elem, attrs, ngModel) {
             elem.spectrum();
-            if (!ngModel) return;
+            if (!ngModel){
+                return;
+            }
             ngModel.$render = function () {
                 elem.spectrum('set', ngModel.$viewValue || '#fff');
             };
@@ -873,7 +871,7 @@ app.directive('colorpicker', function(){
                 });
             });
         }
-    }
+    };
 });
 
 
