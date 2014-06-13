@@ -66,16 +66,14 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         ],
         canvas =  document.getElementById("dicecanvas"),
         ctx = canvas.getContext("2d"),
-        W = 350,
-        H = 350,
         dice, i,
         gravity = 0.2,
         bounceFactor = 0.5,
         updates,timer,numupdates=0,
         stopRoll = false;
 
-    canvas.height = H;
-    canvas.width = W;
+    canvas.height = $scope.canvasHeight;
+    canvas.width = $scope.canvasWidth;
 
     $scope.running = false;
     $scope.diceResults = [];
@@ -99,7 +97,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         }
 
         function clearCanvas() {
-            ctx.clearRect(0, 0, W, H);
+            ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
         }
 
         function stop(){
@@ -115,8 +113,8 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
                 dice[i].draw();
                 dice[i].y += dice[i].vy;
                 dice[i].vy += gravity;
-                if(dice[i].y + dice[i].height > H) {
-                    dice[i].y = H - dice[i].height;
+                if(dice[i].y + dice[i].height > $scope.canvasHeight) {
+                    dice[i].y = $scope.canvasHeight - dice[i].height;
                     dice[i].vy *= -bounceFactor;
                 }
             }
@@ -191,7 +189,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout) {
         dice = [];
         for(i=0;i<$scope.diceValues.length;i++){
             var die = {
-                x: (W/10)*i + 15,
+                x: ($scope.canvasWidth/10)*i + 15,
                 y: Math.floor(Math.random()*$scope.numDice),
                 height:32,
                 stopped:false,
@@ -268,14 +266,12 @@ app.controller('CardCtrl', function ($scope){
 app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityService){
     var canvas = document.getElementById("marblecanvas"),
         ctx = canvas.getContext("2d"),
-        W = 350,
-        H = 350,
         BALL_RADIUS = 15,
         balls,bounceFactor = 0.1,
         updates,numBallsCreated;
 
-    canvas.height = H;
-    canvas.width = W;
+    canvas.height = $scope.canvasHeight;
+    canvas.width = $scope.canvasWidth;
 
     $scope.running = false;
 
@@ -356,12 +352,12 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
         clearCanvas();
         for(var i =0;i<balls.length;i++){
             balls[i].draw();
-            if( balls[i].x<0 || balls[i].x>W){
+            if( balls[i].x<0 || balls[i].x>$scope.canvasWidth){
                 balls[i].vx *= -bounceFactor;
                 balls[i].dx=-balls[i].dx;
             }
 
-            if( balls[i].y<0 || balls[i].y>H){
+            if( balls[i].y<0 || balls[i].y>$scope.canvasHeight){
                 balls[i].vy *= -bounceFactor;
                 balls[i].dy=-balls[i].dy;
             }
@@ -422,8 +418,8 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     var createBall = function(color){
         numBallsCreated++;
         return {
-            x: ballInitPos(numBallsCreated,W).x,
-            y: ballInitPos(numBallsCreated,W).y,
+            x: ballInitPos(numBallsCreated,$scope.canvasWidth).x,
+            y: ballInitPos(numBallsCreated,$scope.canvasWidth).y,
             radius: BALL_RADIUS,
             color: color,
             vx: Math.floor(Math.random()*10),
@@ -445,7 +441,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     };
 
     var clearCanvas = function() {
-        ctx.clearRect(0, 0, W, H);
+        ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
     };
     var reset = function(){
         clearCanvas();
@@ -575,10 +571,12 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
     var width = 338,
         height = 482,
         angle = 0,
-        radius = Math.min(width, height) / 2, path, text;
+        radius = Math.min(width, height) / 2,
+        path,
+        text;
 
 
-     var arc = d3.svg.arc()
+    var arc = d3.svg.arc()
         .outerRadius(radius - 10)
         .innerRadius(0);
 
@@ -709,6 +707,10 @@ app.controller('SpinCtrl', function ($scope, ProbabilityService) {
 
 app.directive('probDice', function(){
     return{
+        scope: {
+            canvasHeight: '@canvasHeight',
+            canvasWidth:  '@canvasWidth'
+        },
         template:   '<div class="col" ng-controller="DiceCtrl">' +
                         '<div class="leftCol">' +
                             '<p><label>Dice:</label>' +
@@ -737,6 +739,10 @@ app.directive('probDice', function(){
 });
 app.directive('probCards', function(){
    return{
+       scope: {
+           height: '@height',
+           width:  '@width'
+       },
        template:    '<div class="col" ng-controller="CardCtrl">' +
                        '<div class="leftCol">' +
                            '<div class="flip-container" >' +
@@ -759,6 +765,10 @@ app.directive('probCards', function(){
 });
 app.directive('probMarbles', function(){
     return{
+        scope: {
+            canvasHeight: '@canvasHeight',
+            canvasWidth:  '@canvasWidth'
+        },
         template:   '<div class="col" ng-controller="MarbleCtrl" ng-init="init()">' +
                         '<div class="leftCol" style="width: 450px;">' +
                             '<label>Number of slices</label>' +
@@ -793,6 +803,10 @@ app.directive('probMarbles', function(){
 });
 app.directive('probCoin', function(){
     return{
+        scope: {
+            height: '@height',
+            width:  '@width'
+        },
         template:   '<div class="col" >' +
                         '<div class="leftCol">' +
                             '<form>' +
@@ -817,6 +831,10 @@ app.directive('probCoin', function(){
 });
 app.directive('probSpinner',function(){
     return{
+        scope: {
+            height: '@height',
+            width:  '@width'
+        },
         template:   '<div class="col" ng-init="begin()">' +
                         '<div class="leftCol" style="float: left;width:700px" >' +
                             '<div id="wheel" style="float: right"></div>' +
