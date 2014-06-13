@@ -70,7 +70,7 @@ app.controller('DiceCtrl', function ($scope,$interval,$timeout,ProbabilityServic
         }
 
         function clearCanvas() {
-            ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function stop(){
@@ -414,7 +414,7 @@ app.controller('MarbleCtrl', function ($scope,$interval,$timeout,ProbabilityServ
     };
 
     var clearCanvas = function() {
-        ctx.clearRect(0, 0, $scope.canvasWidth, $scope.canvasHeight);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
     var reset = function(){
         clearCanvas();
