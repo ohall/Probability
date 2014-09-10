@@ -744,7 +744,7 @@ app.directive('probMarbles', function(){
         },
         template:   '<div class="col" ng-controller="MarbleCtrl" ng-init="init()">' +
                         '<div class="leftCol" style="width: 450px;">' +
-                            '<label>Number of slices</label>' +
+                            '<label>Number of marbles</label>' +
                             '<input class="smallinput" type="number" max="{{MAXDIFFBALLS}}" min="0" ng-model="ballTypeCount" ng-change="ballsChanged()"/>' +
                             '<form ng-submit="runMarbleAni()">' +
                                 '<div class="itemconfig" ng-repeat="balltype in ballObjects">' +
